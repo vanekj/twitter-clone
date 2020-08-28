@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+  # Mongo container
+  mongo:
+    image: mongo
+    container_name: mongo
+    env_file:
+      - ./.env
+    volumes:
+      - ./docker/mongo/db:/data/db
+    ports:
+      - 27017:27017
+
+  # Application container
+  app:
+    image: node:12-alpine
+    container_name: app
+    env_file:
+      - ./.env
+    volumes:
+      - ./:/app
+    working_dir: /app
+    ports:
+      - 8080:8080
+    command: "npm run serve"
+    links:
+      - mongo
+    depends_on:
+      - mongo

@@ -1,0 +1,47 @@
+{
+	"name": "twitter-clone",
+	"version": "1.0.0",
+	"description": "Twitter clone application",
+	"author": {
+		"name": "Jakub Vaněk",
+		"email": "info@jakub-vanek.eu"
+	},
+	"scripts": {
+		"lint:js": "eslint --no-error-on-unmatched-pattern app/**/*.{js,vue}",
+		"lint:css": "stylelint --allow-empty-input app/**/*.{css,vue}",
+		"lint": "npm run lint:js && npm run lint:css",
+		"dev": "docker-compose up --build",
+		"serve": "nodemon ./app/backend/server.js",
+		"build": "nuxt build -c ./app/nuxt.config.js",
+		"start": "node ./app/backend/server.js"
+	},
+	"dependencies": {
+		"@nuxtjs/axios": "^5.12.2",
+		"compression": "^1.7.4",
+		"cookie-parser": "^1.4.5",
+		"express": "^4.17.1",
+		"mongoose": "^5.10.2",
+		"nuxt": "^2.14.4"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "^9.1.2",
+		"@commitlint/config-conventional": "^9.1.2",
+		"babel-eslint": "^10.1.0",
+		"dotenv": "^8.2.0",
+		"eslint": "^7.7.0",
+		"eslint-plugin-vue": "^6.2.2",
+		"husky": "^4.2.5",
+		"nodemon": "^2.0.4",
+		"stylelint": "^13.6.1",
+		"stylelint-config-standard": "^20.0.0",
+		"stylelint-processor-html": "^1.0.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vanekj/twitter-clone"
+	},
+	"bugs": {
+		"email": "info@jakub-vanek.eu",
+		"url": "https://github.com/vanekj/twitter-clone/issues"
+	}
+}
