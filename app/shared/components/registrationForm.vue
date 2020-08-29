@@ -13,14 +13,9 @@
 						<b-form-input v-model="form.lastName" required />
 					</b-form-group>
 				</b-col>
-				<b-col cols="6">
+				<b-col cols="12">
 					<b-form-group label="Nickname">
 						<b-form-input v-model="form.nickname" required />
-					</b-form-group>
-				</b-col>
-				<b-col cols="6">
-					<b-form-group label="Email">
-						<b-form-input v-model="form.email" type="email" required />
 					</b-form-group>
 				</b-col>
 				<b-col cols="6">
@@ -54,7 +49,6 @@
 					firstName: '',
 					lastName: '',
 					nickname: '',
-					email: '',
 					password: '',
 					confirmPassword: ''
 				}
