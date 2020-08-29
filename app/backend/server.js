@@ -5,10 +5,10 @@ const express = require('express'),
 const config = require('./config'),
 	nuxtConfig = require('../nuxt.config');
 
-const connectDatabase = require('./util/connectDatabase'),
-	createNuxtApplication = require('./util/createNuxtApplication');
+const connectDatabase = require('./utils/connectDatabase'),
+	createNuxtApplication = require('./utils/createNuxtApplication');
 
-const apiRouter = require('./router/api');
+const apiRouter = require('./routers/api');
 
 (async () => {
 
