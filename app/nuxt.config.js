@@ -6,7 +6,11 @@ module.exports = {
 		htmlAttrs: {
 			lang: 'en'
 		},
-		titleTemplate: 'Twitter Clone',
+		titleTemplate(pageTitle) {
+			let primaryTitle = 'Twitter Clone',
+				secondaryTitle = pageTitle ? ` - ${pageTitle}` : '';
+			return `${primaryTitle}${secondaryTitle}`;
+		},
 		meta: [
 			{ charset: 'utf-8' },
 			{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -17,7 +21,8 @@ module.exports = {
 		]
 	},
 	modules: [
-		'@nuxtjs/axios'
+		'@nuxtjs/axios',
+		'bootstrap-vue/nuxt'
 	],
 	plugins: [
 		'@/plugins/axios'

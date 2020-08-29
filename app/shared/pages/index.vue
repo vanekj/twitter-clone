@@ -1,5 +1,3 @@
 <template>
-	<div id="app">
-		<h1>Here is the app! 🚀</h1>
-	</div>
+	<h1>index.vue</h1>
 </template>
