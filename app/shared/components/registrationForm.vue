@@ -57,7 +57,7 @@
 		methods: {
 			onSubmit() {
 				this.working = true;
-				this.$axios.post('/api/registration', {
+				this.$axios.post('/api/auth/registration', {
 					...this.form
 				}).then(() => {
 					this.$emit('success', this.form);

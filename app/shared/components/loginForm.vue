@@ -34,7 +34,7 @@
 				error: '',
 				working: false,
 				form: {
-					email: '',
+					nickname: '',
 					password: ''
 				}
 			};
@@ -42,7 +42,7 @@
 		methods: {
 			onSubmit() {
 				this.working = true;
-				this.$axios.post('/api/login', {
+				this.$axios.post('/api/auth/login', {
 					...this.form
 				}).then(() => {
 					this.$emit('success', this.form);
