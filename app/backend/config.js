@@ -11,12 +11,18 @@ if (isDevelopment) {
 	});
 }
 
+// JWT configuration
+const jwt = {
+	algorithm: 'HS256',
+	secret: process.env.JWT_SECRET
+};
+
 // Set config; Init server models
 module.exports = {
 	isDevelopment,
 	isProduction,
+	jwt,
 	port: process.env.PORT || 80,
 	mongoUri: process.env.MONGO_URI,
-	jwtSecret: process.env.JWT_SECRET,
 	staticPath: path.join(__dirname, '../shared/static')
 };

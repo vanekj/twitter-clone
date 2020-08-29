@@ -10,7 +10,7 @@ const apiRouter = express.Router();
 /**
  * Use auth middleware
  */
-apiRouter.use(authMiddleware(config.jwtSecret).unless({
+apiRouter.use(authMiddleware(config.jwt).unless({
 	path: [
 		'/api/auth/registration',
 		'/api/auth/login'
