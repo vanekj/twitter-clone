@@ -17,5 +17,6 @@ module.exports = {
 	isProduction,
 	port: process.env.PORT || 80,
 	mongoUri: process.env.MONGO_URI,
+	jwtSecret: process.env.JWT_SECRET,
 	staticPath: path.join(__dirname, '../shared/static')
 };
