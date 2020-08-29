@@ -1,6 +1,8 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs'),
+	jsonwebtoken = require('jsonwebtoken');
 
-const profile = require('../models/profile'),
+const config = require('../config'),
+	profile = require('../models/profile'),
 	profileSchema = require('../schemas/profile');
 
 /**
@@ -60,10 +62,18 @@ const postLogin = async (request, response) => {
 				message: 'Incorrect password'
 			});
 		}
+		let cleanProfile = profileSchema(foundProfile),
+			generatedToken = jsonwebtoken.sign(cleanProfile, config.jwt.secret, {
+				algorithm: config.jwt.algorithm,
+				expiresIn: '7 days'
+			});
 		return response.json({
 			status: 'success',
 			message: 'Login successfull',
-			payload: profileSchema(foundProfile)
+			payload: {
+				profile: cleanProfile,
+				token: generatedToken
+			}
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({
