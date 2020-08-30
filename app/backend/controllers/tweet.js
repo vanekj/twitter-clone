@@ -35,7 +35,9 @@ const postTweet = async (request, response) => {
  */
 const getTweets = async (request, response) => {
 	try {
-		let foundTweets = await tweet.find().populate('author');
+		let foundTweets = await tweet.find().populate({
+			path: 'author'
+		});
 		return response.json({
 			status: 'success',
 			payload: foundTweets.map(tweetSchema)
@@ -55,7 +57,17 @@ const getTweets = async (request, response) => {
  */
 const getTweet = async (request, response) => {
 	try {
-		let foundTweet = await tweet.findById(request.params.id).populate('author');
+		let foundTweet = await tweet.findById(request.params.id).populate({
+			path: 'author'
+		}).populate({
+			path: 'comments.author'
+		});
+		if (!foundTweet) {
+			return response.status(404).json({
+				status: 'error',
+				message: 'Tweet not found'
+			});
+		}
 		return response.json({
 			status: 'success',
 			payload: tweetSchema(foundTweet)
@@ -68,8 +80,52 @@ const getTweet = async (request, response) => {
 	}
 };
 
+/**
+ * Handle tweet comment creation request
+ * @param {Object} request Express request object
+ * @param {Object} response Express response object
+ */
+const postTweetComment = async (request, response) => {
+	try {
+		let foundTweet = await tweet.findById(request.params.id).populate('author');
+		if (!foundTweet) {
+			return response.status(404).json({
+				status: 'error',
+				message: 'Tweet not found'
+			});
+		}
+		let updatedTweet = await tweet.findOneAndUpdate({
+			_id: foundTweet._id
+		}, {
+			$push: {
+				comments: {
+					content: request.body.content,
+					author: foundTweet.author.id
+				}
+			}
+		}, {
+			new: true
+		}).populate({
+			path: 'author'
+		}).populate({
+			path: 'comments.author'
+		});
+		console.log(updatedTweet);
+		return response.json({
+			status: 'success',
+			payload: tweetSchema(updatedTweet)
+		});
+	} catch (error) {
+		return response.status(error.status || 500).json({
+			status: 'error',
+			message: error.message || 'Unexpected error'
+		});
+	}
+};
+
 module.exports = {
 	postTweet,
 	getTweets,
-	getTweet
+	getTweet,
+	postTweetComment
 };

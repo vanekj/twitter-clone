@@ -50,6 +50,11 @@ apiRouter.get('/tweet', tweetController.getTweets);
 apiRouter.get('/tweet/:id', tweetController.getTweet);
 
 /**
+ * Handle tweet comment creation request
+ */
+apiRouter.post('/tweet/:id/comment', tweetController.postTweetComment);
+
+/**
  * 404 response for all requests that did not match any of the API paths
  */
 apiRouter.all('*', (request, response) => {
