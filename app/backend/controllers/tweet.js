@@ -41,6 +41,8 @@ const getTweets = async (request, response) => {
 			createdAt: 'descending'
 		}).populate({
 			path: 'author'
+		}).populate({
+			path: 'likes'
 		});
 		return response.json({
 			status: 'success',
