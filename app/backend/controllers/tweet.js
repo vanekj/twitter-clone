@@ -165,9 +165,7 @@ const postTweetLike = async (request, response) => {
  */
 const deleteTweetLike = async (request, response) => {
 	try {
-		await tweet.findOneAndUpdate({
-			'likes.author': response.locals.auth.id
-		}, {
+		await tweet.findByIdAndUpdate(request.params.id, {
 			$pull: {
 				likes: {
 					author: response.locals.auth.id
