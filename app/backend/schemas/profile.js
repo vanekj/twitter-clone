@@ -3,7 +3,7 @@ module.exports = (profile) => {
 		return {
 			firstName: profile.firstName,
 			lastName: profile.lastName,
-			fullName: `${profile.firstName} ${profile.lastName}`,
+			fullName: profile.fullName,
 			nickname: profile.nickname
 		};
 	} else {
