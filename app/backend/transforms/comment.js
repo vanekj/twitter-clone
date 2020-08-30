@@ -5,7 +5,8 @@ module.exports = (comment) => {
 		return {
 			id: comment._id,
 			content: comment.content,
-			author: profileTransform(comment.author)
+			author: profileTransform(comment.author),
+			date: comment.createdAt
 		};
 	} else {
 		return comment;
