@@ -37,7 +37,9 @@ const postTweet = async (request, response) => {
  */
 const getTweets = async (request, response) => {
 	try {
-		let foundTweets = await tweet.find().populate({
+		let foundTweets = await tweet.find().sort({
+			createdAt: 'descending'
+		}).populate({
 			path: 'author'
 		});
 		return response.json({
@@ -63,6 +65,11 @@ const getTweet = async (request, response) => {
 			path: 'author'
 		}).populate({
 			path: 'comments',
+			options: {
+				sort: {
+					createdAt: 'descending'
+				}
+			},
 			populate: {
 				path: 'author'
 			}
