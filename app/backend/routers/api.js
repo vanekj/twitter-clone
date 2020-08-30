@@ -55,6 +55,11 @@ apiRouter.get('/tweet/:id', tweetController.getTweet);
 apiRouter.post('/tweet/:id/comment', tweetController.postTweetComment);
 
 /**
+ * Handle tweet like creation request
+ */
+apiRouter.post('/tweet/:id/like', tweetController.postTweetLike);
+
+/**
  * 404 response for all requests that did not match any of the API paths
  */
 apiRouter.all('*', (request, response) => {

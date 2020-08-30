@@ -87,33 +87,53 @@ const getTweet = async (request, response) => {
  */
 const postTweetComment = async (request, response) => {
 	try {
-		let foundTweet = await tweet.findById(request.params.id).populate('author');
+		let foundTweet = await tweet.findById(request.params.id);
 		if (!foundTweet) {
 			return response.status(404).json({
 				status: 'error',
 				message: 'Tweet not found'
 			});
 		}
-		let updatedTweet = await tweet.findOneAndUpdate({
-			_id: foundTweet._id
-		}, {
+		await foundTweet.update({
 			$push: {
 				comments: {
 					content: request.body.content,
-					author: foundTweet.author.id
+					author: foundTweet.author._id
 				}
 			}
-		}, {
-			new: true
-		}).populate({
-			path: 'author'
-		}).populate({
-			path: 'comments.author'
 		});
-		console.log(updatedTweet);
 		return response.json({
-			status: 'success',
-			payload: tweetSchema(updatedTweet)
+			status: 'success'
+		});
+	} catch (error) {
+		return response.status(error.status || 500).json({
+			status: 'error',
+			message: error.message || 'Unexpected error'
+		});
+	}
+};
+
+/**
+ * Handle tweet like creation request
+ * @param {Object} request Express request object
+ * @param {Object} response Express response object
+ */
+const postTweetLike = async (request, response) => {
+	try {
+		let foundTweet = await tweet.findById(request.params.id);
+		if (!foundTweet) {
+			return response.status(404).json({
+				status: 'error',
+				message: 'Tweet not found'
+			});
+		}
+		await foundTweet.update({
+			$push: {
+				likes: foundTweet.author._id
+			}
+		});
+		return response.json({
+			status: 'success'
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({
@@ -127,5 +147,6 @@ module.exports = {
 	postTweet,
 	getTweets,
 	getTweet,
-	postTweetComment
+	postTweetComment,
+	postTweetLike
 };

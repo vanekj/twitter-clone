@@ -1,5 +1,6 @@
 const profileSchema = require('./profile'),
-	commentSchema = require('./comment');
+	commentSchema = require('./comment'),
+	likeSchema = require('./like');
 
 module.exports = (tweet) => {
 	if (typeof tweet === 'object' && tweet) {
@@ -8,7 +9,7 @@ module.exports = (tweet) => {
 			content: tweet.content,
 			author: profileSchema(tweet.author),
 			comments: tweet.comments.map(commentSchema),
-			likes: tweet.likes
+			likes: tweet.likes.map(likeSchema)
 		};
 	} else {
 		return tweet;
