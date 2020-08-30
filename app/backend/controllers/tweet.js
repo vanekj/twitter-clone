@@ -12,13 +12,12 @@ const postTweet = async (request, response) => {
 		let tweetAuthor = await await profile.findOne({
 			nickname: response.locals.auth.nickname
 		});
-		let createdTweet = await tweet.create({
+		await tweet.create({
 			content: request.body.content,
 			author: tweetAuthor._id
 		});
 		return response.json({
-			status: 'success',
-			payload: tweetSchema(createdTweet)
+			status: 'success'
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({
@@ -129,7 +128,9 @@ const postTweetLike = async (request, response) => {
 		}
 		await foundTweet.update({
 			$push: {
-				likes: foundTweet.author._id
+				likes: {
+					author: foundTweet.author._id
+				}
 			}
 		});
 		return response.json({

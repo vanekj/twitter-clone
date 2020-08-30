@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const schema = mongoose.Schema({
+const profileSchema = mongoose.Schema({
 	firstName: {
 		type: String,
 		required: true
@@ -22,8 +22,8 @@ const schema = mongoose.Schema({
 	timestamps: true
 });
 
-schema.virtual('fullName').get(function() {
+profileSchema.virtual('fullName').get(function() {
 	return `${this.firstName} ${this.lastName}`;
 });
 
-module.exports = mongoose.model('Profile', schema);
+module.exports = mongoose.model('Profile', profileSchema);
