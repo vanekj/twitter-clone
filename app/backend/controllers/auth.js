@@ -2,8 +2,7 @@ const bcrypt = require('bcryptjs'),
 	jsonwebtoken = require('jsonwebtoken');
 
 const config = require('../config'),
-	profile = require('../models/profile'),
-	profileTransform = require('../transforms/profile');
+	profile = require('../models/profile');
 
 /**
  * Handle profile registration request
@@ -64,16 +63,18 @@ const postLogin = async (request, response) => {
 				message: 'Incorrect password'
 			});
 		}
-		let cleanProfile = profileTransform(foundProfile),
-			generatedToken = jsonwebtoken.sign(cleanProfile, config.jwt.secret, {
-				algorithm: config.jwt.algorithm,
-				expiresIn: '7 days'
-			});
+		let generatedToken = jsonwebtoken.sign({
+			id: foundProfile.id,
+			nickname: foundProfile.nickname
+		}, config.jwt.secret, {
+			algorithm: config.jwt.algorithm,
+			expiresIn: '7 days'
+		});
 		return response.json({
 			status: 'success',
 			message: 'Login successfull',
 			payload: {
-				profile: cleanProfile,
+				profile: foundProfile,
 				token: generatedToken
 			}
 		});
@@ -92,12 +93,10 @@ const postLogin = async (request, response) => {
  */
 const getMe = async (request, response) => {
 	try {
-		let foundProfile = await profile.findOne({
-			nickname: response.locals.auth.nickname
-		});
+		let foundProfile = await profile.findById(response.locals.auth.id);
 		return response.json({
 			status: 'success',
-			payload: profileTransform(foundProfile)
+			payload: foundProfile
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({

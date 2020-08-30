@@ -6,19 +6,25 @@ const contentSchemaType = {
 	max: 256
 };
 
-const commentSchemaType = {
-	type: mongoose.Schema.Types.ObjectId,
-	ref: 'Comment'
-};
-
-const likeSchemaType = {
-	type: mongoose.Schema.Types.ObjectId,
-	ref: 'Like'
+const createdAtSchemaType = {
+	type: Date,
+	default: Date.now
 };
 
 const profileSchemaType = {
 	type: mongoose.Schema.Types.ObjectId,
 	ref: 'Profile'
+};
+
+const commentSchemaType = {
+	content: contentSchemaType,
+	author: profileSchemaType,
+	createdAt: createdAtSchemaType
+};
+
+const likeSchemaType = {
+	author: profileSchemaType,
+	createdAt: createdAtSchemaType
 };
 
 const tweetSchema = mongoose.Schema({
@@ -27,7 +33,13 @@ const tweetSchema = mongoose.Schema({
 	likes: [likeSchemaType],
 	author: profileSchemaType
 }, {
-	timestamps: true
+	timestamps: true,
+	toObject: {
+		virtuals: true
+	},
+	toJSON: {
+		virtuals: true
+	}
 });
 
 tweetSchema.virtual('commentsCount').get(function() {

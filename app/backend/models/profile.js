@@ -19,7 +19,13 @@ const profileSchema = mongoose.Schema({
 		required: true
 	}
 }, {
-	timestamps: true
+	timestamps: true,
+	toObject: {
+		virtuals: true
+	},
+	toJSON: {
+		virtuals: true
+	}
 });
 
 profileSchema.virtual('fullName').get(function() {

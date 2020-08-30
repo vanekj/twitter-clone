@@ -1,9 +1,4 @@
-const tweet = require('../models/tweet'),
-	profile = require('../models/profile'),
-	comment = require('../models/comment'),
-	like = require('../models/like');
-
-const tweetTransform = require('../transforms/tweet');
+const tweet = require('../models/tweet');
 
 /**
  * Handle tweet creation request
@@ -12,12 +7,9 @@ const tweetTransform = require('../transforms/tweet');
  */
 const postTweet = async (request, response) => {
 	try {
-		let tweetAuthor = await await profile.findOne({
-			nickname: response.locals.auth.nickname
-		});
 		await tweet.create({
 			content: request.body.content,
-			author: tweetAuthor._id
+			author: response.locals.auth.id
 		});
 		return response.json({
 			status: 'success'
@@ -42,11 +34,13 @@ const getTweets = async (request, response) => {
 		}).populate({
 			path: 'author'
 		}).populate({
-			path: 'likes'
+			path: 'comments.author'
+		}).populate({
+			path: 'likes.author'
 		});
 		return response.json({
 			status: 'success',
-			payload: foundTweets.map(tweetTransform)
+			payload: foundTweets
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({
@@ -66,17 +60,9 @@ const getTweet = async (request, response) => {
 		let foundTweet = await tweet.findById(request.params.id).populate({
 			path: 'author'
 		}).populate({
-			path: 'comments',
-			options: {
-				sort: {
-					createdAt: 'descending'
-				}
-			},
-			populate: {
-				path: 'author'
-			}
+			path: 'comments.author'
 		}).populate({
-			path: 'likes'
+			path: 'likes.author'
 		});
 		if (!foundTweet) {
 			return response.status(404).json({
@@ -86,7 +72,7 @@ const getTweet = async (request, response) => {
 		}
 		return response.json({
 			status: 'success',
-			payload: tweetTransform(foundTweet)
+			payload: foundTweet
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({
@@ -103,21 +89,37 @@ const getTweet = async (request, response) => {
  */
 const postTweetComment = async (request, response) => {
 	try {
-		let foundTweet = await tweet.findById(request.params.id);
-		if (!foundTweet) {
-			return response.status(404).json({
-				status: 'error',
-				message: 'Tweet not found'
-			});
-		}
-		let createdComment = await comment.create({
-			content: request.body.content,
-			author: response.locals.auth.id,
-			tweet: foundTweet._id
-		});
-		await foundTweet.update({
+		await tweet.findByIdAndUpdate(request.params.id, {
 			$push: {
-				comments: createdComment._id
+				comments: {
+					content: request.body.content,
+					author: response.locals.auth.id
+				}
+			}
+		});
+		return response.json({
+			status: 'success'
+		});
+	} catch (error) {
+		return response.status(error.status || 500).json({
+			status: 'error',
+			message: error.message || 'Unexpected error'
+		});
+	}
+};
+
+/**
+ * Handle tweet comment removal request
+ * @param {Object} request Express request object
+ * @param {Object} response Express response object
+ */
+const deleteTweetComment = async (request, response) => {
+	try {
+		await tweet.findByIdAndUpdate(request.params.id, {
+			$pull: {
+				comments: {
+					_id: request.params.commentId
+				}
 			}
 		});
 		return response.json({
@@ -138,20 +140,38 @@ const postTweetComment = async (request, response) => {
  */
 const postTweetLike = async (request, response) => {
 	try {
-		let foundTweet = await tweet.findById(request.params.id);
-		if (!foundTweet) {
-			return response.status(404).json({
-				status: 'error',
-				message: 'Tweet not found'
-			});
-		}
-		let createdLike = await like.create({
-			author: response.locals.auth.id,
-			tweet: foundTweet._id
-		});
-		await foundTweet.update({
+		await tweet.findByIdAndUpdate(request.params.id, {
 			$push: {
-				likes: createdLike._id
+				likes: {
+					author: response.locals.auth.id
+				}
+			}
+		});
+		return response.json({
+			status: 'success'
+		});
+	} catch (error) {
+		return response.status(error.status || 500).json({
+			status: 'error',
+			message: error.message || 'Unexpected error'
+		});
+	}
+};
+
+/**
+ * Handle tweet like removal request
+ * @param {Object} request Express request object
+ * @param {Object} response Express response object
+ */
+const deleteTweetLike = async (request, response) => {
+	try {
+		await tweet.findOneAndUpdate({
+			'likes.author': response.locals.auth.id
+		}, {
+			$pull: {
+				likes: {
+					author: response.locals.auth.id
+				}
 			}
 		});
 		return response.json({
@@ -170,5 +190,7 @@ module.exports = {
 	getTweets,
 	getTweet,
 	postTweetComment,
-	postTweetLike
+	deleteTweetComment,
+	postTweetLike,
+	deleteTweetLike
 };

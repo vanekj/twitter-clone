@@ -55,9 +55,19 @@ apiRouter.get('/tweet/:id', tweetController.getTweet);
 apiRouter.post('/tweet/:id/comment', tweetController.postTweetComment);
 
 /**
+ * Handle tweet comment removal request
+ */
+apiRouter.delete('/tweet/:id/comment/:commentId', tweetController.deleteTweetComment);
+
+/**
  * Handle tweet like creation request
  */
 apiRouter.post('/tweet/:id/like', tweetController.postTweetLike);
+
+/**
+ * Handle tweet like removal request
+ */
+apiRouter.delete('/tweet/:id/like', tweetController.deleteTweetLike);
 
 /**
  * 404 response for all requests that did not match any of the API paths
