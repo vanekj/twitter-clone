@@ -9,7 +9,9 @@ module.exports = (tweet) => {
 			content: tweet.content,
 			author: profileTransform(tweet.author),
 			comments: tweet.comments.map(commentTransform),
+			commentsCount: tweet.commentsCount,
 			likes: tweet.likes.map(likeTransform),
+			likesCount: tweet.likesCount,
 			date: tweet.createdAt
 		};
 	} else {

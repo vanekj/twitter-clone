@@ -1,6 +1,9 @@
 const tweet = require('../models/tweet'),
 	profile = require('../models/profile'),
-	tweetTransform = require('../transforms/tweet');
+	comment = require('../models/comment'),
+	like = require('../models/like');
+
+const tweetTransform = require('../transforms/tweet');
 
 /**
  * Handle tweet creation request
@@ -59,7 +62,12 @@ const getTweet = async (request, response) => {
 		let foundTweet = await tweet.findById(request.params.id).populate({
 			path: 'author'
 		}).populate({
-			path: 'comments.author'
+			path: 'comments',
+			populate: {
+				path: 'author'
+			}
+		}).populate({
+			path: 'likes'
 		});
 		if (!foundTweet) {
 			return response.status(404).json({
@@ -93,12 +101,14 @@ const postTweetComment = async (request, response) => {
 				message: 'Tweet not found'
 			});
 		}
+		let createdComment = await comment.create({
+			content: request.body.content,
+			author: response.locals.auth.id,
+			tweet: foundTweet._id
+		});
 		await foundTweet.update({
 			$push: {
-				comments: {
-					content: request.body.content,
-					author: foundTweet.author._id
-				}
+				comments: createdComment._id
 			}
 		});
 		return response.json({
@@ -126,11 +136,13 @@ const postTweetLike = async (request, response) => {
 				message: 'Tweet not found'
 			});
 		}
+		let createdLike = await like.create({
+			author: response.locals.auth.id,
+			tweet: foundTweet._id
+		});
 		await foundTweet.update({
 			$push: {
-				likes: {
-					author: foundTweet.author._id
-				}
+				likes: createdLike._id
 			}
 		});
 		return response.json({
