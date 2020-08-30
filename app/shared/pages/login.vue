@@ -13,6 +13,7 @@
 	import TLoginForm from '@/components/loginForm.vue';
 
 	export default {
+		auth: false,
 		components: {
 			TLoginForm
 		},

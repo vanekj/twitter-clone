@@ -4,6 +4,12 @@
 	</b-container>
 </template>
 
+<script>
+	export default {
+		middleware: 'auth'
+	};
+</script>
+
 <style>
 	html,
 	body,

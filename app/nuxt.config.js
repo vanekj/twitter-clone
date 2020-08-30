@@ -22,10 +22,22 @@ module.exports = {
 	},
 	modules: [
 		'@nuxtjs/axios',
+		'@nuxtjs/auth',
 		'bootstrap-vue/nuxt'
 	],
 	plugins: [
 		'@/plugins/axios'
 	],
-	srcDir: './app/shared'
+	srcDir: './app/shared',
+	auth: {
+		strategies: {
+			local: {
+				endpoints: {
+					login: { url: '/api/auth/login', method: 'post', propertyName: 'payload.token' },
+					user: { url: '/api/auth/me', method: 'get', propertyName: 'payload' },
+					logout: false
+				}
+			}
+		}
+	}
 };

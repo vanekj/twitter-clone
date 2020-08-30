@@ -42,8 +42,8 @@
 		methods: {
 			onSubmit() {
 				this.working = true;
-				this.$axios.post('/api/auth/login', {
-					...this.form
+				this.$auth.loginWith('local', {
+					data: this.form
 				}).then(() => {
 					this.$emit('success', this.form);
 				}).catch((error) => {

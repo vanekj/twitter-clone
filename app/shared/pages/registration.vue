@@ -13,6 +13,7 @@
 	import TRegistrationForm from '@/components/registrationForm.vue';
 
 	export default {
+		auth: false,
 		components: {
 			TRegistrationForm
 		},
