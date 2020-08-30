@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs'),
 
 const config = require('../config'),
 	profile = require('../models/profile'),
-	profileSchema = require('../schemas/profile');
+	profileTransform = require('../transforms/profile');
 
 /**
  * Handle profile registration request
@@ -64,7 +64,7 @@ const postLogin = async (request, response) => {
 				message: 'Incorrect password'
 			});
 		}
-		let cleanProfile = profileSchema(foundProfile),
+		let cleanProfile = profileTransform(foundProfile),
 			generatedToken = jsonwebtoken.sign(cleanProfile, config.jwt.secret, {
 				algorithm: config.jwt.algorithm,
 				expiresIn: '7 days'
@@ -97,7 +97,7 @@ const getMe = async (request, response) => {
 		});
 		return response.json({
 			status: 'success',
-			payload: profileSchema(foundProfile)
+			payload: profileTransform(foundProfile)
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({

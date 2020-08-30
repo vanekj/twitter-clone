@@ -1,11 +1,11 @@
-const profileSchema = require('./profile');
+const profileTransform = require('./profile');
 
 module.exports = (comment) => {
 	if (typeof comment === 'object' && comment) {
 		return {
 			id: comment._id,
 			content: comment.content,
-			author: profileSchema(comment.author)
+			author: profileTransform(comment.author)
 		};
 	} else {
 		return comment;

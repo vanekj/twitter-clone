@@ -1,6 +1,6 @@
 const tweet = require('../models/tweet'),
 	profile = require('../models/profile'),
-	tweetSchema = require('../schemas/tweet');
+	tweetTransform = require('../transforms/tweet');
 
 /**
  * Handle tweet creation request
@@ -39,7 +39,7 @@ const getTweets = async (request, response) => {
 		});
 		return response.json({
 			status: 'success',
-			payload: foundTweets.map(tweetSchema)
+			payload: foundTweets.map(tweetTransform)
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({
@@ -69,7 +69,7 @@ const getTweet = async (request, response) => {
 		}
 		return response.json({
 			status: 'success',
-			payload: tweetSchema(foundTweet)
+			payload: tweetTransform(foundTweet)
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({

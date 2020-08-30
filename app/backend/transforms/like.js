@@ -1,10 +1,10 @@
-const profileSchema = require('./profile');
+const profileTransform = require('./profile');
 
 module.exports = (like) => {
 	if (typeof like === 'object' && like) {
 		return {
 			id: like._id,
-			author: profileSchema(like.author)
+			author: profileTransform(like.author)
 		};
 	} else {
 		return like;
