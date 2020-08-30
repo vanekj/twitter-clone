@@ -1,7 +1,7 @@
 module.exports = (profile) => {
 	if (typeof profile === 'object' && profile) {
 		return {
-			id: profile.id,
+			id: profile._id,
 			firstName: profile.firstName,
 			lastName: profile.lastName,
 			fullName: profile.fullName,
