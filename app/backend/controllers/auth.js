@@ -22,7 +22,9 @@ const postRegistration = async (request, response) => {
 		}
 		let hashedPassword = await bcrypt.hash(password, 10);
 		await profile.create({
-			...request.body,
+			firstName: request.body.firstName,
+			lastName: request.body.lastName,
+			nickname: request.body.nickname,
 			password: hashedPassword
 		});
 		return response.json({
