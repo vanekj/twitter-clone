@@ -83,7 +83,30 @@ const postLogin = async (request, response) => {
 	}
 };
 
+/**
+ * Handle profile information request
+ * @param {Object} request Express request object
+ * @param {Object} response Express response object
+ */
+const getMe = async (request, response) => {
+	try {
+		let foundProfile = await profile.findOne({
+			nickname: response.locals.auth.nickname
+		});
+		return response.json({
+			status: 'success',
+			payload: profileSchema(foundProfile)
+		});
+	} catch (error) {
+		return response.status(error.status || 500).json({
+			status: 'error',
+			message: error.message || 'Unexpected error'
+		});
+	}
+};
+
 module.exports = {
 	postRegistration,
-	postLogin
+	postLogin,
+	getMe
 };

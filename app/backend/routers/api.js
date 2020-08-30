@@ -28,6 +28,11 @@ apiRouter.post('/auth/registration', authController.postRegistration);
 apiRouter.post('/auth/login', authController.postLogin);
 
 /**
+ * Handle profile information request
+ */
+apiRouter.get('/auth/me', authController.getMe);
+
+/**
  * 404 response for all requests that did not match any of the API paths
  */
 apiRouter.all('*', (request, response) => {
