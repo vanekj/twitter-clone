@@ -2,8 +2,10 @@ const express = require('express');
 
 const config = require('../config');
 
+const authMiddleware = require('../middlewares/auth');
+
 const authController = require('../controllers/auth'),
-	authMiddleware = require('../middlewares/auth');
+	tweetController = require('../controllers/tweet');
 
 const apiRouter = express.Router();
 
@@ -31,6 +33,21 @@ apiRouter.post('/auth/login', authController.postLogin);
  * Handle profile information request
  */
 apiRouter.get('/auth/me', authController.getMe);
+
+/**
+ * Handle tweet creation request
+ */
+apiRouter.post('/tweet', tweetController.postTweet);
+
+/**
+ * Handle tweet list request
+ */
+apiRouter.get('/tweet', tweetController.getTweets);
+
+/**
+ * Handle single tweet list request
+ */
+apiRouter.get('/tweet/:id', tweetController.getTweet);
 
 /**
  * 404 response for all requests that did not match any of the API paths
