@@ -7,6 +7,6 @@ module.exports = (profile) => {
 			nickname: profile.nickname
 		};
 	} else {
-		return null;
+		return profile;
 	}
 };
