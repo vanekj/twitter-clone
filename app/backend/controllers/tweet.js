@@ -83,6 +83,28 @@ const getTweet = async (request, response) => {
 };
 
 /**
+ * Handle tweet removal request
+ * @param {Object} request Express request object
+ * @param {Object} response Express response object
+ */
+const deleteTweet = async (request, response) => {
+	try {
+		await tweet.findOneAndRemove({
+			_id: request.params.id,
+			author: response.locals.auth.id
+		});
+		return response.json({
+			status: 'success'
+		});
+	} catch (error) {
+		return response.status(error.status || 500).json({
+			status: 'error',
+			message: error.message || 'Unexpected error'
+		});
+	}
+};
+
+/**
  * Handle tweet comment creation request
  * @param {Object} request Express request object
  * @param {Object} response Express response object
@@ -97,8 +119,16 @@ const postTweetComment = async (request, response) => {
 				}
 			}
 		});
+		let updatedTweet = await tweet.findById(request.params.id).populate({
+			path: 'author'
+		}).populate({
+			path: 'comments.author'
+		}).populate({
+			path: 'likes.author'
+		});
 		return response.json({
-			status: 'success'
+			status: 'success',
+			payload: updatedTweet
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({
@@ -122,8 +152,16 @@ const deleteTweetComment = async (request, response) => {
 				}
 			}
 		});
+		let updatedTweet = await tweet.findById(request.params.id).populate({
+			path: 'author'
+		}).populate({
+			path: 'comments.author'
+		}).populate({
+			path: 'likes.author'
+		});
 		return response.json({
-			status: 'success'
+			status: 'success',
+			payload: updatedTweet
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({
@@ -147,8 +185,16 @@ const postTweetLike = async (request, response) => {
 				}
 			}
 		});
+		let updatedTweet = await tweet.findById(request.params.id).populate({
+			path: 'author'
+		}).populate({
+			path: 'comments.author'
+		}).populate({
+			path: 'likes.author'
+		});
 		return response.json({
-			status: 'success'
+			status: 'success',
+			payload: updatedTweet
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({
@@ -172,8 +218,16 @@ const deleteTweetLike = async (request, response) => {
 				}
 			}
 		});
+		let updatedTweet = await tweet.findById(request.params.id).populate({
+			path: 'author'
+		}).populate({
+			path: 'comments.author'
+		}).populate({
+			path: 'likes.author'
+		});
 		return response.json({
-			status: 'success'
+			status: 'success',
+			payload: updatedTweet
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({
@@ -187,6 +241,7 @@ module.exports = {
 	postTweet,
 	getTweets,
 	getTweet,
+	deleteTweet,
 	postTweetComment,
 	deleteTweetComment,
 	postTweetLike,

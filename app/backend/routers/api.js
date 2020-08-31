@@ -50,6 +50,11 @@ apiRouter.get('/tweet', tweetController.getTweets);
 apiRouter.get('/tweet/:id', tweetController.getTweet);
 
 /**
+ * Handle tweet removal request
+ */
+apiRouter.delete('/tweet/:id', tweetController.deleteTweet);
+
+/**
  * Handle tweet comment creation request
  */
 apiRouter.post('/tweet/:id/comment', tweetController.postTweetComment);
