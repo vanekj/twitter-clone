@@ -2,10 +2,10 @@ const bcrypt = require('bcryptjs'),
 	jsonwebtoken = require('jsonwebtoken');
 
 const config = require('../config'),
-	profile = require('../models/profile');
+	user = require('../models/user');
 
 /**
- * Handle profile registration request
+ * Handle user registration request
  * @param {Object} request Express request object
  * @param {Object} response Express response object
  */
@@ -20,7 +20,7 @@ const postRegistration = async (request, response) => {
 			});
 		}
 		let hashedPassword = await bcrypt.hash(password, 10);
-		await profile.create({
+		await user.create({
 			firstName: request.body.firstName,
 			lastName: request.body.lastName,
 			nickname: request.body.nickname,
@@ -39,24 +39,24 @@ const postRegistration = async (request, response) => {
 };
 
 /**
- * Handle profile login request
+ * Handle user login request
  * @param {Object} request Express request object
  * @param {Object} response Express response object
  */
 const postLogin = async (request, response) => {
 	try {
-		let foundProfile = await profile.findOne({
+		let foundUser = await user.findOne({
 			nickname: request.body.nickname
 		});
-		if (!foundProfile) {
+		if (!foundUser) {
 			return response.status(404).json({
 				status: 'error',
-				message: 'Profile not found'
+				message: 'User not found'
 			});
 		}
-		let profilePassword = foundProfile.password,
+		let userPassword = foundUser.password,
 			requestPassword = request.body.password,
-			passwordsMatch = await bcrypt.compare(requestPassword, profilePassword);
+			passwordsMatch = await bcrypt.compare(requestPassword, userPassword);
 		if (!passwordsMatch) {
 			return response.status(400).json({
 				status: 'error',
@@ -64,8 +64,8 @@ const postLogin = async (request, response) => {
 			});
 		}
 		let generatedToken = jsonwebtoken.sign({
-			id: foundProfile.id,
-			nickname: foundProfile.nickname
+			id: foundUser.id,
+			nickname: foundUser.nickname
 		}, config.jwt.secret, {
 			algorithm: config.jwt.algorithm,
 			expiresIn: '7 days'
@@ -74,7 +74,7 @@ const postLogin = async (request, response) => {
 			status: 'success',
 			message: 'Login successfull',
 			payload: {
-				profile: foundProfile,
+				user: foundUser,
 				token: generatedToken
 			}
 		});
@@ -87,16 +87,16 @@ const postLogin = async (request, response) => {
 };
 
 /**
- * Handle profile information request
+ * Handle user information request
  * @param {Object} request Express request object
  * @param {Object} response Express response object
  */
 const getMe = async (request, response) => {
 	try {
-		let foundProfile = await profile.findById(response.locals.auth.id);
+		let foundUser = await user.findById(response.locals.auth.id);
 		return response.json({
 			status: 'success',
-			payload: foundProfile
+			payload: foundUser
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({

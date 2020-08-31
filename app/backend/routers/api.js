@@ -20,17 +20,17 @@ apiRouter.use(authMiddleware(config.jwt).unless({
 }));
 
 /**
- * Handle profile registration request
+ * Handle user registration request
  */
 apiRouter.post('/auth/registration', authController.postRegistration);
 
 /**
- * Handle profile login request
+ * Handle user login request
  */
 apiRouter.post('/auth/login', authController.postLogin);
 
 /**
- * Handle profile information request
+ * Handle user information request
  */
 apiRouter.get('/auth/me', authController.getMe);
 
