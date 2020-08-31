@@ -64,7 +64,7 @@ const postLogin = async (request, response) => {
 			});
 		}
 		let generatedToken = jsonwebtoken.sign({
-			id: foundUser.id,
+			_id: foundUser._id,
 			username: foundUser.username
 		}, config.jwt.secret, {
 			algorithm: config.jwt.algorithm,
@@ -93,7 +93,7 @@ const postLogin = async (request, response) => {
  */
 const getMe = async (request, response) => {
 	try {
-		let foundUser = await user.findById(response.locals.auth.id);
+		let foundUser = await user.findById(response.locals.auth._id);
 		return response.json({
 			status: 'success',
 			payload: foundUser
