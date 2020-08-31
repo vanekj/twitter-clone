@@ -145,7 +145,10 @@ const postTweetComment = async (request, response) => {
  */
 const deleteTweetComment = async (request, response) => {
 	try {
-		await tweet.findByIdAndUpdate(request.params.id, {
+		await tweet.findOneAndUpdate({
+			_id: request.params.id,
+			'comments.author': response.locals.auth.id
+		}, {
 			$pull: {
 				comments: {
 					_id: request.params.commentId
@@ -211,7 +214,10 @@ const postTweetLike = async (request, response) => {
  */
 const deleteTweetLike = async (request, response) => {
 	try {
-		await tweet.findByIdAndUpdate(request.params.id, {
+		await tweet.findOneAndUpdate({
+			_id: request.params.id,
+			'likes.author': response.locals.auth.id
+		}, {
 			$pull: {
 				likes: {
 					author: response.locals.auth.id
