@@ -2,13 +2,19 @@ const express = require('express');
 
 const config = require('../config');
 
-const authMiddleware = require('../middlewares/auth');
+const authMiddleware = require('../middlewares/auth'),
+	sanitizeMiddleware = require('../middlewares/sanitize');
 
 const authController = require('../controllers/auth'),
 	tweetController = require('../controllers/tweet'),
 	userController = require('../controllers/user');
 
 const apiRouter = express.Router();
+
+/**
+ * Use body sanitizing middleware
+ */
+apiRouter.use(sanitizeMiddleware);
 
 /**
  * Use auth middleware
