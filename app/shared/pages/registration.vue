@@ -1,7 +1,7 @@
 <template>
 	<b-row class="h-100">
 		<b-col></b-col>
-		<b-col cols="5" class="d-flex align-items-center bg-light">
+		<b-col cols="7" class="d-flex align-items-center bg-light">
 			<b-card title="Registration">
 				<t-registration-form @success="onSuccess" />
 			</b-card>

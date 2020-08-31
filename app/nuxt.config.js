@@ -23,10 +23,13 @@ module.exports = {
 	modules: [
 		'@nuxtjs/axios',
 		'@nuxtjs/auth',
-		'bootstrap-vue/nuxt'
+		['bootstrap-vue/nuxt', {
+			icons: true
+		}]
 	],
 	plugins: [
-		'@/plugins/axios'
+		'@/plugins/axios',
+		'@/plugins/filters'
 	],
 	srcDir: './app/shared',
 	auth: {
