@@ -5,7 +5,8 @@ const config = require('../config');
 const authMiddleware = require('../middlewares/auth');
 
 const authController = require('../controllers/auth'),
-	tweetController = require('../controllers/tweet');
+	tweetController = require('../controllers/tweet'),
+	userController = require('../controllers/user');
 
 const apiRouter = express.Router();
 
@@ -73,6 +74,16 @@ apiRouter.post('/tweet/:id/like', tweetController.postTweetLike);
  * Handle tweet like removal request
  */
 apiRouter.delete('/tweet/:id/like', tweetController.deleteTweetLike);
+
+/**
+ * Handle single user information request
+ */
+apiRouter.get('/user/:username', userController.getUser);
+
+/**
+ * Handle single user tweets list request
+ */
+apiRouter.get('/user/:username/tweet', userController.getUserTweets);
 
 /**
  * 404 response for all requests that did not match any of the API paths
