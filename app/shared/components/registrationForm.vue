@@ -14,8 +14,8 @@
 					</b-form-group>
 				</b-col>
 				<b-col cols="12">
-					<b-form-group label="Nickname">
-						<b-form-input v-model="form.nickname" required />
+					<b-form-group label="Username">
+						<b-form-input v-model="form.username" required />
 					</b-form-group>
 				</b-col>
 				<b-col cols="6">
@@ -48,7 +48,7 @@
 				form: {
 					firstName: '',
 					lastName: '',
-					nickname: '',
+					username: '',
 					password: '',
 					confirmPassword: ''
 				}

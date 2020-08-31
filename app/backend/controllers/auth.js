@@ -23,7 +23,7 @@ const postRegistration = async (request, response) => {
 		await user.create({
 			firstName: request.body.firstName,
 			lastName: request.body.lastName,
-			nickname: request.body.nickname,
+			username: request.body.username,
 			password: hashedPassword
 		});
 		return response.json({
@@ -46,7 +46,7 @@ const postRegistration = async (request, response) => {
 const postLogin = async (request, response) => {
 	try {
 		let foundUser = await user.findOne({
-			nickname: request.body.nickname
+			username: request.body.username
 		});
 		if (!foundUser) {
 			return response.status(404).json({
@@ -65,7 +65,7 @@ const postLogin = async (request, response) => {
 		}
 		let generatedToken = jsonwebtoken.sign({
 			id: foundUser.id,
-			nickname: foundUser.nickname
+			username: foundUser.username
 		}, config.jwt.secret, {
 			algorithm: config.jwt.algorithm,
 			expiresIn: '7 days'

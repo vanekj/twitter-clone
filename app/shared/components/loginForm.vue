@@ -4,8 +4,8 @@
 		<b-form @submit.prevent="onSubmit">
 			<b-row>
 				<b-col cols="6">
-					<b-form-group label="Nickname">
-						<b-form-input v-model="form.nickname" required />
+					<b-form-group label="Username">
+						<b-form-input v-model="form.username" required />
 					</b-form-group>
 				</b-col>
 				<b-col cols="6">
@@ -34,7 +34,7 @@
 				error: '',
 				working: false,
 				form: {
-					nickname: '',
+					username: '',
 					password: ''
 				}
 			};
