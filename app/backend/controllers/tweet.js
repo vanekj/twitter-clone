@@ -16,7 +16,7 @@ const postTweet = async (request, response) => {
 			}),
 			contentWithMentions = Object.values(foundUsers).reduce((content, user) => {
 				let searchPattern = new RegExp(`@(${user.username})`, 'g');
-				return content.replace(searchPattern, '[@$1](/u/$1)');
+				return content.replace(searchPattern, '<a href="/u/$1">@$1</a>');
 			}, request.body.content);
 		await tweet.create({
 			content: contentWithMentions,
@@ -131,7 +131,7 @@ const postTweetComment = async (request, response) => {
 			}),
 			contentWithMentions = Object.values(foundUsers).reduce((content, user) => {
 				let searchPattern = new RegExp(`@(${user.username})`, 'g');
-				return content.replace(searchPattern, '[@$1](/u/$1)');
+				return content.replace(searchPattern, '<a href="/u/$1">@$1</a>');
 			}, request.body.content);
 		await tweet.findByIdAndUpdate(request.params.id, {
 			$push: {
