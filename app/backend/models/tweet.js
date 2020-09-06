@@ -18,6 +18,7 @@ const profileSchemaType = {
 
 const commentSchemaType = {
 	content: contentSchemaType,
+	content_raw: contentSchemaType,
 	author: profileSchemaType,
 	createdAt: createdAtSchemaType
 };
@@ -29,6 +30,7 @@ const likeSchemaType = {
 
 const tweetSchema = mongoose.Schema({
 	content: contentSchemaType,
+	content_raw: contentSchemaType,
 	comments: [commentSchemaType],
 	likes: [likeSchemaType],
 	author: profileSchemaType

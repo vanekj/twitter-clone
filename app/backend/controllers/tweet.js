@@ -1,4 +1,5 @@
-const tweet = require('../models/tweet');
+const tweet = require('../models/tweet'),
+	user = require('../models/user');
 
 /**
  * Handle tweet creation request
@@ -7,8 +8,19 @@ const tweet = require('../models/tweet');
  */
 const postTweet = async (request, response) => {
 	try {
+		let foundUsernames = (request.body.content.match(/@(\w+)/g) || []).map((match) => match.substring(1)),
+			foundUsers = await user.find({
+				username: {
+					$in: foundUsernames
+				}
+			}),
+			contentWithMentions = Object.values(foundUsers).reduce((content, user) => {
+				let searchPattern = new RegExp(`@(${user.username})`, 'g');
+				return content.replace(searchPattern, '[@$1](/u/$1)');
+			}, request.body.content);
 		await tweet.create({
-			content: request.body.content,
+			content: contentWithMentions,
+			content_raw: request.body.content,
 			author: response.locals.auth._id
 		});
 		return response.json({
@@ -111,10 +123,21 @@ const deleteTweet = async (request, response) => {
  */
 const postTweetComment = async (request, response) => {
 	try {
+		let foundUsernames = (request.body.content.match(/@(\w+)/g) || []).map((match) => match.substring(1)),
+			foundUsers = await user.find({
+				username: {
+					$in: foundUsernames
+				}
+			}),
+			contentWithMentions = Object.values(foundUsers).reduce((content, user) => {
+				let searchPattern = new RegExp(`@(${user.username})`, 'g');
+				return content.replace(searchPattern, '[@$1](/u/$1)');
+			}, request.body.content);
 		await tweet.findByIdAndUpdate(request.params.id, {
 			$push: {
 				comments: {
-					content: request.body.content,
+					content: contentWithMentions,
+					content_raw: request.body.content,
 					author: response.locals.auth._id
 				}
 			}
