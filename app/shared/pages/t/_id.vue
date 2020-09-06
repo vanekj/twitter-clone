@@ -5,7 +5,7 @@
 			<t-profile />
 		</b-col>
 		<b-col class="bg-light" cols="7">
-			<t-tweet :tweet="tweet" show-comments />
+			<t-tweet :tweet="tweet" show-comments @delete="onTweetDelete" />
 		</b-col>
 	</b-row>
 </template>
@@ -27,6 +27,13 @@
 		computed: {
 			tweet() {
 				return this.$store.getters.getSingleTweet(this.$route.params.id);
+			}
+		},
+		methods: {
+			onTweetDelete() {
+				this.$router.push({
+					name: 'index'
+				});
 			}
 		}
 	};

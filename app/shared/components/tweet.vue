@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if="tweet">
 		<b-overlay :show="tweetIsDeleting" spinner-type="grow" spinner-variant="danger" spinner-small>
 			<b-card class="mt-3 mb-3">
 				<div class="d-flex">
@@ -56,7 +56,7 @@
 		props: {
 			tweet: {
 				type: Object,
-				required: true
+				default: () => null
 			},
 			showComments: {
 				type: Boolean,
@@ -90,6 +90,7 @@
 					await this.$store.dispatch('deleteTweet', {
 						tweetId: this.tweet._id
 					});
+					this.$emit('delete');
 				} catch {
 					this.tweetIsDeleting = false;
 				}
