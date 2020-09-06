@@ -19,11 +19,12 @@ const postRegistration = async (request, response) => {
 				message: 'Passwords don\'t match'
 			});
 		}
-		let hashedPassword = await bcrypt.hash(password, 10);
+		let hashedPassword = await bcrypt.hash(password, 10),
+			cleanUsername = request.body.username.replace(/\W+/g, '_');
 		await user.create({
 			firstName: request.body.firstName,
 			lastName: request.body.lastName,
-			username: request.body.username,
+			username: cleanUsername,
 			password: hashedPassword
 		});
 		return response.json({

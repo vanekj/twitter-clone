@@ -15,7 +15,7 @@
 				</b-col>
 				<b-col cols="12">
 					<b-form-group label="Username">
-						<b-form-input v-model="form.username" required />
+						<b-form-input v-model="cleanUsername" required />
 					</b-form-group>
 				</b-col>
 				<b-col cols="6">
@@ -53,6 +53,16 @@
 					confirmPassword: ''
 				}
 			};
+		},
+		computed: {
+			cleanUsername: {
+				get() {
+					return this.form.username;
+				},
+				set(value) {
+					this.form.username = value.replace(/\W+/g, '_');
+				}
+			}
 		},
 		methods: {
 			onSubmit() {
