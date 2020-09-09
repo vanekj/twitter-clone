@@ -2,7 +2,7 @@
 	<b-row class="h-100">
 		<b-col />
 		<b-col cols="3">
-			<t-profile />
+			<t-profile is-current-user :user="user" />
 		</b-col>
 		<b-col class="bg-light" cols="7">
 			<t-tweet :tweet="tweet" show-comments @delete="onTweetDelete" />
@@ -27,6 +27,9 @@
 		computed: {
 			tweet() {
 				return this.$store.getters.getSingleTweet(this.$route.params.id);
+			},
+			user() {
+				return this.$store.state.auth.user;
 			}
 		},
 		methods: {

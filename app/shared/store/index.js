@@ -1,5 +1,6 @@
 export const state = () => ({
-	tweets: []
+	tweets: [],
+	user: null
 });
 
 export const mutations = {
@@ -13,6 +14,9 @@ export const mutations = {
 	},
 	DELETE_TWEET(state, deletedTweetId) {
 		state.tweets = state.tweets.filter((tweet) => tweet._id !== deletedTweetId);
+	},
+	SET_USER(state, user) {
+		state.user = Object.assign({}, user);
 	}
 };
 
@@ -48,9 +52,9 @@ export const actions = {
 		let response = await this.$axios.delete(`/api/tweet/${tweetId}/comment/${commentId}`);
 		commit('UPDATE_TWEET', response.data.payload);
 	},
-	async getUser(store, { username }) {
+	async getUser({ commit }, { username }) {
 		let response = await this.$axios.get(`/api/user/${username}`);
-		return response.data.payload;
+		commit('SET_USER', response.data.payload);
 	},
 	async getUserTweets({ commit }, { username }) {
 		let response = await this.$axios.get(`/api/user/${username}/tweet`);

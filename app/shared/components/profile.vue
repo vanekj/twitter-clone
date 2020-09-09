@@ -8,13 +8,15 @@
 					<span class="text-muted">@{{ user.username }}</span>
 				</n-link>
 			</div>
-			<hr />
-			<b-button size="sm" variant="outline-danger" @click.prevent="logout">
-				<b-icon-door-open />
-			</b-button>
-			<b-button size="sm" variant="light">
-				<b-icon-bell /> Notifications
-			</b-button>
+			<template v-if="isCurrentUser">
+				<hr />
+				<b-button size="sm" variant="outline-danger" @click.prevent="logout">
+					<b-icon-door-open />
+				</b-button>
+				<b-button size="sm" variant="light">
+					<b-icon-bell /> Notifications
+				</b-button>
+			</template>
 		</b-card>
 		<p class="pt-1 text-center">
 			<small>
@@ -30,9 +32,14 @@
 
 <script>
 	export default {
-		computed: {
-			user() {
-				return this.$store.state.auth.user;
+		props: {
+			isCurrentUser: {
+				type: Boolean,
+				default: false
+			},
+			user: {
+				type: Object,
+				required: true
 			}
 		},
 		methods: {
