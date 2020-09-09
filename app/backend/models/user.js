@@ -1,5 +1,10 @@
 const mongoose = require('mongoose');
 
+const profileSchemaType = {
+	type: mongoose.Schema.Types.ObjectId,
+	ref: 'Profile'
+};
+
 const profileSchema = mongoose.Schema({
 	firstName: {
 		type: String,
@@ -17,7 +22,8 @@ const profileSchema = mongoose.Schema({
 	password: {
 		type: String,
 		required: true
-	}
+	},
+	following: [profileSchemaType]
 }, {
 	timestamps: true,
 	toObject: {

@@ -68,7 +68,73 @@ const getUserTweets = async (request, response) => {
 	}
 };
 
+/**
+ * Handle user follow request
+ * @param {Object} request Express request object
+ * @param {Object} response Express response object
+ */
+const postUserFollow = async (request, response) => {
+	try {
+		let foundUser = await user.findOne({
+			username: request.params.username
+		});
+		if (!foundUser) {
+			return response.status(404).json({
+				status: 'error',
+				message: 'User not found'
+			});
+		}
+		await user.findByIdAndUpdate(response.locals.user._id, {
+			$push: {
+				following: foundUser._id
+			}
+		});
+		return response.json({
+			status: 'success'
+		});
+	} catch (error) {
+		return response.status(error.status || 500).json({
+			status: 'error',
+			message: error.message || 'Unexpected error'
+		});
+	}
+};
+
+/**
+ * Handle user unfollow request
+ * @param {Object} request Express request object
+ * @param {Object} response Express response object
+ */
+const deleteUserFollow = async (request, response) => {
+	try {
+		let foundUser = await user.findOne({
+			username: request.params.username
+		});
+		if (!foundUser) {
+			return response.status(404).json({
+				status: 'error',
+				message: 'User not found'
+			});
+		}
+		await user.findByIdAndUpdate(response.locals.user._id, {
+			$pull: {
+				following: foundUser._id
+			}
+		});
+		return response.json({
+			status: 'success'
+		});
+	} catch (error) {
+		return response.status(error.status || 500).json({
+			status: 'error',
+			message: error.message || 'Unexpected error'
+		});
+	}
+};
+
 module.exports = {
 	getUser,
-	getUserTweets
+	getUserTweets,
+	postUserFollow,
+	deleteUserFollow
 };
