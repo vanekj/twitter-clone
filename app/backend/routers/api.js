@@ -60,52 +60,57 @@ apiRouter.get('/tweet', tweetController.getTweets);
 /**
  * Handle single tweet list request
  */
-apiRouter.get('/tweet/:id', tweetController.getTweet);
+apiRouter.get('/tweet/detail/:id', tweetController.getTweet);
 
 /**
  * Handle tweet removal request
  */
-apiRouter.delete('/tweet/:id', tweetController.deleteTweet);
+apiRouter.delete('/tweet/detail/:id', tweetController.deleteTweet);
 
 /**
  * Handle tweet comment creation request
  */
-apiRouter.post('/tweet/:id/comment', tweetController.postTweetComment);
+apiRouter.post('/tweet/comment/:id', tweetController.postTweetComment);
 
 /**
  * Handle tweet comment removal request
  */
-apiRouter.delete('/tweet/:id/comment/:commentId', tweetController.deleteTweetComment);
+apiRouter.delete('/tweet/comment/:id/:commentId', tweetController.deleteTweetComment);
 
 /**
  * Handle tweet like creation request
  */
-apiRouter.post('/tweet/:id/like', tweetController.postTweetLike);
+apiRouter.post('/tweet/like/:id', tweetController.postTweetLike);
 
 /**
  * Handle tweet like removal request
  */
-apiRouter.delete('/tweet/:id/like', tweetController.deleteTweetLike);
+apiRouter.delete('/tweet/like/:id', tweetController.deleteTweetLike);
 
 /**
  * Handle single user information request
  */
-apiRouter.get('/user/:username', userController.getUser);
+apiRouter.get('/user/detail/:username', userController.getUser);
 
 /**
  * Handle single user tweets list request
  */
-apiRouter.get('/user/:username/tweet', userController.getUserTweets);
+apiRouter.get('/user/tweet/:username', userController.getUserTweets);
 
 /**
  * Handle user follow request
  */
-apiRouter.post('/user/:username/follow', userController.postUserFollow);
+apiRouter.post('/user/follow/:username', userController.postUserFollow);
 
 /**
  * Handle user unfollow request
  */
-apiRouter.delete('/user/:username/follow', userController.deleteUserFollow);
+apiRouter.delete('/user/follow/:username', userController.deleteUserFollow);
+
+/**
+ * Handle random users list request
+ */
+apiRouter.get('/user/random', userController.getRandom);
 
 /**
  * 404 response for all requests that did not match any of the API paths

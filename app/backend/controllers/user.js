@@ -132,9 +132,34 @@ const deleteUserFollow = async (request, response) => {
 	}
 };
 
+/**
+ * Handle random users list request
+ * @param {Object} request Express request object
+ * @param {Object} response Express response object
+ */
+const getRandom = async (request, response) => {
+	try {
+		let users = await user.aggregate([{
+			$sample: {
+				size: 3
+			}
+		}]);
+		return response.json({
+			status: 'success',
+			payload: users
+		});
+	} catch (error) {
+		return response.status(error.status || 500).json({
+			status: 'error',
+			message: error.message || 'Unexpected error'
+		});
+	}
+};
+
 module.exports = {
 	getUser,
 	getUserTweets,
 	postUserFollow,
-	deleteUserFollow
+	deleteUserFollow,
+	getRandom
 };
