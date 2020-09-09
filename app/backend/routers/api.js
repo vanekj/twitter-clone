@@ -108,9 +108,9 @@ apiRouter.post('/user/follow/:username', userController.postUserFollow);
 apiRouter.delete('/user/follow/:username', userController.deleteUserFollow);
 
 /**
- * Handle random users list request
+ * Handle top users list request
  */
-apiRouter.get('/user/random', userController.getRandom);
+apiRouter.get('/user/top', userController.getTop);
 
 /**
  * 404 response for all requests that did not match any of the API paths

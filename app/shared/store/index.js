@@ -1,12 +1,16 @@
 export const state = () => ({
 	tweets: [],
+	userTweets: [],
 	user: null,
-	randomUsers: []
+	topUsers: []
 });
 
 export const mutations = {
 	SET_TWEETS(state, tweets) {
 		state.tweets = [...tweets];
+	},
+	SET_USER_TWEETS(state, userTweets) {
+		state.userTweets = [...userTweets];
 	},
 	UPDATE_TWEET(state, updatedTweet) {
 		state.tweets = state.tweets.map((tweet) => {
@@ -19,8 +23,8 @@ export const mutations = {
 	SET_USER(state, user) {
 		state.user = Object.assign({}, user);
 	},
-	SET_RANDOM_USERS(state, randomUsers) {
-		state.randomUsers = Object.assign({}, randomUsers);
+	SET_TOP_USERS(state, topUsers) {
+		state.topUsers = Object.assign({}, topUsers);
 	}
 };
 
@@ -62,7 +66,7 @@ export const actions = {
 	},
 	async getUserTweets({ commit }, { username }) {
 		let response = await this.$axios.get(`/api/user/tweet/${username}`);
-		commit('SET_TWEETS', response.data.payload);
+		commit('SET_USER_TWEETS', response.data.payload);
 	},
 	async followUser(store, { username }) {
 		await this.$axios.post(`/api/user/follow/${username}`);
@@ -72,9 +76,9 @@ export const actions = {
 		await this.$axios.delete(`/api/user/follow/${username}`);
 		await this.$auth.fetchUser();
 	},
-	async getRandomUsers({ commit }) {
-		let response = await this.$axios.get('/api/user/random');
-		commit('SET_RANDOM_USERS', response.data.payload);
+	async getTopUsers({ commit }) {
+		let response = await this.$axios.get('/api/user/top');
+		commit('SET_TOP_USERS', response.data.payload);
 	}
 };
 

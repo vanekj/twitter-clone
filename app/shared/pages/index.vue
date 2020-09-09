@@ -6,6 +6,14 @@
 		</b-col>
 		<b-col class="bg-light" cols="7">
 			<t-tweet-create-form @success="loadTweets" />
+			<template v-if="followingCount <= 3">
+				<h5>You can start following these accounts</h5>
+				<b-row>
+					<b-col v-for="randomUser in topUsers" :key="randomUser._id" cols="4">
+						<t-profile :show-footer="false" :user="randomUser" @follow-user="onFollowChange" @unfollow-user="onFollowChange" />
+					</b-col>
+				</b-row>
+			</template>
 			<template v-if="tweets.length">
 				<t-tweet v-for="tweet in tweets" :key="tweet._id" :tweet="tweet" />
 			</template>
@@ -28,19 +36,34 @@
 			TTweet
 		},
 		async middleware({ store }) {
-			await store.dispatch('getTweets');
+			await Promise.all([
+				store.dispatch('getTweets'),
+				store.dispatch('getTopUsers')
+			]);
 		},
 		computed: {
+			followingCount() {
+				return this.$store.state.auth.user.followingCount;
+			},
 			tweets() {
 				return this.$store.state.tweets;
 			},
 			user() {
 				return this.$store.state.auth.user;
+			},
+			topUsers() {
+				return this.$store.state.topUsers;
 			}
 		},
 		methods: {
 			loadTweets() {
 				return this.$store.dispatch('getTweets');
+			},
+			onFollowChange() {
+				return Promise.all([
+					this.$store.dispatch('getTopUsers'),
+					this.$store.dispatch('getTweets')
+				]);
 			}
 		}
 	};

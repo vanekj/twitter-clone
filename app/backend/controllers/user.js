@@ -159,17 +159,20 @@ const deleteUserFollow = async (request, response) => {
 };
 
 /**
- * Handle random users list request
+ * Handle top users list request
  * @param {Object} request Express request object
  * @param {Object} response Express response object
  */
-const getRandom = async (request, response) => {
+const getTop = async (request, response) => {
 	try {
-		let users = await user.aggregate([{
-			$sample: {
-				size: 3
+		let users = await user.find({
+			_id: {
+				$ne: response.locals.user._id
 			}
-		}]);
+		}).sort([
+			['followersCount', 'descending'],
+			['createdAt', 'ascending']
+		]).limit(3);
 		return response.json({
 			status: 'success',
 			payload: users
@@ -187,5 +190,5 @@ module.exports = {
 	getUserTweets,
 	postUserFollow,
 	deleteUserFollow,
-	getRandom
+	getTop
 };

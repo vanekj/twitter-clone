@@ -8,6 +8,10 @@
 					<span class="text-muted">@{{ user.username }}</span>
 				</n-link>
 			</div>
+			<div v-if="showFollowers || showFollowing" class="mt-2">
+				<b-badge v-if="showFollowers" v-b-tooltip.hover title="Followers" variant="light"><b-icon-arrow-down /> {{ user.followersCount }}</b-badge>
+				<b-badge v-if="showFollowing" v-b-tooltip.hover title="Following" variant="light"><b-icon-arrow-up /> {{ user.followingCount }}</b-badge>
+			</div>
 			<hr />
 			<template v-if="isCurrentUser">
 				<b-button size="sm" variant="outline-danger" @click.prevent="logout">
@@ -26,7 +30,7 @@
 				</b-button>
 			</template>
 		</b-card>
-		<p class="pt-1 text-center">
+		<p v-if="showFooter" class="pt-1 text-center">
 			<small>
 				<a class="text-muted" href="https://github.com/vanekj" target="_blank">Author</a>
 				&centerdot;
@@ -46,8 +50,20 @@
 				default: false
 			},
 			user: {
-				type: Object,
+				type: [Boolean, Object],
 				required: true
+			},
+			showFooter: {
+				type: Boolean,
+				default: true
+			},
+			showFollowers: {
+				type: Boolean,
+				default: true
+			},
+			showFollowing: {
+				type: Boolean,
+				default: true
 			}
 		},
 		computed: {
@@ -60,11 +76,13 @@
 				await this.$store.dispatch('followUser', {
 					username: this.user.username
 				});
+				this.$emit('follow-user', this.user.username);
 			},
 			async unfollowUser() {
 				await this.$store.dispatch('unfollowUser', {
 					username: this.user.username
 				});
+				this.$emit('unfollow-user', this.user.username);
 			},
 			async logout() {
 				await this.$auth.logout();
