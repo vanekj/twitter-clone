@@ -59,6 +59,14 @@ export const actions = {
 	async getUserTweets({ commit }, { username }) {
 		let response = await this.$axios.get(`/api/user/${username}/tweet`);
 		commit('SET_TWEETS', response.data.payload);
+	},
+	async followUser(store, { username }) {
+		await this.$axios.post(`/api/user/${username}/follow`);
+		await this.$auth.fetchUser();
+	},
+	async unfollowUser(store, { username }) {
+		await this.$axios.delete(`/api/user/${username}/follow`);
+		await this.$auth.fetchUser();
 	}
 };
 

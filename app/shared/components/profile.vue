@@ -8,13 +8,21 @@
 					<span class="text-muted">@{{ user.username }}</span>
 				</n-link>
 			</div>
+			<hr />
 			<template v-if="isCurrentUser">
-				<hr />
 				<b-button size="sm" variant="outline-danger" @click.prevent="logout">
 					<b-icon-door-open />
 				</b-button>
 				<b-button size="sm" variant="light">
 					<b-icon-bell /> Notifications
+				</b-button>
+			</template>
+			<template v-else>
+				<b-button v-if="following" size="sm" variant="light" @click="unfollowUser">
+					<b-icon-check /> Following
+				</b-button>
+				<b-button v-else size="sm" variant="primary" @click="followUser">
+					<b-icon-eye /> Follow
 				</b-button>
 			</template>
 		</b-card>
@@ -42,7 +50,22 @@
 				required: true
 			}
 		},
+		computed: {
+			following() {
+				return this.$store.state.auth.user.following.includes(this.user._id);
+			}
+		},
 		methods: {
+			async followUser() {
+				await this.$store.dispatch('followUser', {
+					username: this.user.username
+				});
+			},
+			async unfollowUser() {
+				await this.$store.dispatch('unfollowUser', {
+					username: this.user.username
+				});
+			},
 			async logout() {
 				await this.$auth.logout();
 				this.$router.push({
