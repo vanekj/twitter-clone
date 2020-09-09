@@ -21,7 +21,7 @@ const postTweet = async (request, response) => {
 		await tweet.create({
 			content: contentWithMentions,
 			content_raw: request.body.content,
-			author: response.locals.auth._id
+			author: response.locals.user._id
 		});
 		return response.json({
 			status: 'success'
@@ -41,7 +41,11 @@ const postTweet = async (request, response) => {
  */
 const getTweets = async (request, response) => {
 	try {
-		let foundTweets = await tweet.find().sort({
+		let foundTweets = await tweet.find({
+			author: {
+				$in: [...response.locals.user.following, response.locals.user._id]
+			}
+		}).sort({
 			createdAt: 'descending'
 		}).populate({
 			path: 'author'
@@ -103,7 +107,7 @@ const deleteTweet = async (request, response) => {
 	try {
 		await tweet.findOneAndRemove({
 			_id: request.params.id,
-			author: response.locals.auth._id
+			author: response.locals.user._id
 		});
 		return response.json({
 			status: 'success'
@@ -138,7 +142,7 @@ const postTweetComment = async (request, response) => {
 				comments: {
 					content: contentWithMentions,
 					content_raw: request.body.content,
-					author: response.locals.auth._id
+					author: response.locals.user._id
 				}
 			}
 		});
@@ -170,7 +174,7 @@ const deleteTweetComment = async (request, response) => {
 	try {
 		await tweet.findOneAndUpdate({
 			_id: request.params.id,
-			'comments.author': response.locals.auth._id
+			'comments.author': response.locals.user._id
 		}, {
 			$pull: {
 				comments: {
@@ -207,7 +211,7 @@ const postTweetLike = async (request, response) => {
 		await tweet.findByIdAndUpdate(request.params.id, {
 			$push: {
 				likes: {
-					author: response.locals.auth._id
+					author: response.locals.user._id
 				}
 			}
 		});
@@ -239,11 +243,11 @@ const deleteTweetLike = async (request, response) => {
 	try {
 		await tweet.findOneAndUpdate({
 			_id: request.params.id,
-			'likes.author': response.locals.auth._id
+			'likes.author': response.locals.user._id
 		}, {
 			$pull: {
 				likes: {
-					author: response.locals.auth._id
+					author: response.locals.user._id
 				}
 			}
 		});

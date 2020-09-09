@@ -94,7 +94,7 @@ const postLogin = async (request, response) => {
  */
 const getMe = async (request, response) => {
 	try {
-		let foundUser = await user.findById(response.locals.auth._id);
+		let foundUser = await user.findById(response.locals.user._id);
 		return response.json({
 			status: 'success',
 			payload: foundUser

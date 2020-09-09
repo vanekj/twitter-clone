@@ -3,7 +3,8 @@ const express = require('express');
 const config = require('../config');
 
 const authMiddleware = require('../middlewares/auth'),
-	sanitizeMiddleware = require('../middlewares/sanitize');
+	sanitizeMiddleware = require('../middlewares/sanitize'),
+	userMiddleware = require('../middlewares/user');
 
 const authController = require('../controllers/auth'),
 	tweetController = require('../controllers/tweet'),
@@ -25,6 +26,11 @@ apiRouter.use(authMiddleware(config.jwt).unless({
 		'/api/auth/login'
 	]
 }));
+
+/**
+ * Use user middleware
+ */
+apiRouter.use(userMiddleware);
 
 /**
  * Handle user registration request
@@ -90,6 +96,16 @@ apiRouter.get('/user/:username', userController.getUser);
  * Handle single user tweets list request
  */
 apiRouter.get('/user/:username/tweet', userController.getUserTweets);
+
+/**
+ * Handle user follow request
+ */
+apiRouter.post('/user/:username/follow', userController.postUserFollow);
+
+/**
+ * Handle user unfollow request
+ */
+apiRouter.delete('/user/:username/follow', userController.deleteUserFollow);
 
 /**
  * 404 response for all requests that did not match any of the API paths
