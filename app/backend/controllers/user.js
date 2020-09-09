@@ -84,11 +84,24 @@ const postUserFollow = async (request, response) => {
 				message: 'User not found'
 			});
 		}
-		await user.findByIdAndUpdate(response.locals.user._id, {
-			$push: {
-				following: foundUser._id
-			}
-		});
+		await Promise.all([
+			user.findByIdAndUpdate(response.locals.user._id, {
+				$push: {
+					following: foundUser._id
+				},
+				$inc: {
+					followingCount: 1
+				}
+			}),
+			user.findByIdAndUpdate(foundUser._id, {
+				$push: {
+					followers: response.locals.user._id
+				},
+				$inc: {
+					followersCount: 1
+				}
+			})
+		]);
 		return response.json({
 			status: 'success'
 		});
@@ -116,11 +129,24 @@ const deleteUserFollow = async (request, response) => {
 				message: 'User not found'
 			});
 		}
-		await user.findByIdAndUpdate(response.locals.user._id, {
-			$pull: {
-				following: foundUser._id
-			}
-		});
+		await Promise.all([
+			user.findByIdAndUpdate(response.locals.user._id, {
+				$pull: {
+					following: foundUser._id
+				},
+				$inc: {
+					followingCount: -1
+				}
+			}),
+			user.findByIdAndUpdate(foundUser._id, {
+				$pull: {
+					followers: response.locals.user._id
+				},
+				$inc: {
+					followersCount: -1
+				}
+			})
+		]);
 		return response.json({
 			status: 'success'
 		});

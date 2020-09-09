@@ -5,6 +5,11 @@ const profileSchemaType = {
 	ref: 'Profile'
 };
 
+const incrementingNumberSchemaType = {
+	type: Number,
+	default: 0
+};
+
 const profileSchema = mongoose.Schema({
 	firstName: {
 		type: String,
@@ -23,7 +28,10 @@ const profileSchema = mongoose.Schema({
 		type: String,
 		required: true
 	},
-	following: [profileSchemaType]
+	followers: [profileSchemaType],
+	followersCount: incrementingNumberSchemaType,
+	following: [profileSchemaType],
+	followingCount: incrementingNumberSchemaType
 }, {
 	timestamps: true,
 	toObject: {
