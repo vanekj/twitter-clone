@@ -28,14 +28,14 @@
 			TTweet
 		},
 		async middleware({ store, params }) {
-			await store.dispatch('getUserTweets', {
-				username: params.username
-			});
-			if (store.state.auth.user.username !== params.username) {
-				await store.dispatch('getUser', {
+			await Promise.all([
+				store.dispatch('getUser', {
 					username: params.username
-				});
-			}
+				}),
+				store.dispatch('getUserTweets', {
+					username: params.username
+				})
+			]);
 		},
 		computed: {
 			isCurrentUser() {

@@ -1,8 +1,10 @@
 export const state = () => ({
+	topUsers: [],
 	tweets: [],
-	userTweets: [],
 	user: null,
-	topUsers: []
+	userTweets: [],
+	userFollowers: [],
+	userFollowing: []
 });
 
 export const mutations = {
@@ -23,8 +25,14 @@ export const mutations = {
 	SET_USER(state, user) {
 		state.user = Object.assign({}, user);
 	},
+	SET_USER_FOLLOWERS(state, userFollowers) {
+		state.userFollowers = [...userFollowers];
+	},
+	SET_USER_FOLLOWING(state, userFollowing) {
+		state.userFollowing = [...userFollowing];
+	},
 	SET_TOP_USERS(state, topUsers) {
-		state.topUsers = Object.assign({}, topUsers);
+		state.topUsers = [...topUsers];
 	}
 };
 
@@ -67,6 +75,14 @@ export const actions = {
 	async getUserTweets({ commit }, { username }) {
 		let response = await this.$axios.get(`/api/user/tweet/${username}`);
 		commit('SET_USER_TWEETS', response.data.payload);
+	},
+	async getUserFollowers({ commit }, { username }) {
+		let response = await this.$axios.get(`/api/user/followers/${username}`);
+		commit('SET_USER_FOLLOWERS', response.data.payload);
+	},
+	async getUserFollowing({ commit }, { username }) {
+		let response = await this.$axios.get(`/api/user/following/${username}`);
+		commit('SET_USER_FOLLOWING', response.data.payload);
 	},
 	async followUser(store, { username }) {
 		await this.$axios.post(`/api/user/follow/${username}`);

@@ -1,6 +1,6 @@
 <template>
-	<div v-if="user" class="pt-3 pb-3 sticky-top">
-		<b-card class="d-flex text-center">
+	<div v-if="user" class="pt-3 pb-3" :class="{ 'sticky-top': !isFollowersList, 'h-100': isFollowersList }">
+		<b-card class="d-flex text-center" :class="{ 'h-100': isFollowersList }">
 			<b-avatar class="mb-2" :text="user.firstName[0] + user.lastName[0]" size="lg" />
 			<div><strong class="text-body">{{ user.fullName }}</strong></div>
 			<div>
@@ -8,18 +8,27 @@
 					<span class="text-muted">@{{ user.username }}</span>
 				</n-link>
 			</div>
-			<div v-if="showFollowers || showFollowing" class="mt-2">
-				<b-badge v-if="showFollowers" v-b-tooltip.hover title="Followers" variant="light"><b-icon-arrow-down /> {{ user.followersCount }}</b-badge>
-				<b-badge v-if="showFollowing" v-b-tooltip.hover title="Following" variant="light"><b-icon-arrow-up /> {{ user.followingCount }}</b-badge>
-			</div>
+			<b-button-group v-if="showFollows" class="mt-2 w-100" size="sm">
+				<b-button :to="{ name: 'u-username-followers', params: { username: user.username } }" variant="light">
+					<b-icon-arrow-down /> {{ user.followersCount }}
+				</b-button>
+				<b-button :to="{ name: 'u-username-following', params: { username: user.username } }" variant="light">
+					<b-icon-arrow-up /> {{ user.followingCount }}
+				</b-button>
+			</b-button-group>
 			<hr />
 			<template v-if="isCurrentUser">
-				<b-button size="sm" variant="outline-danger" @click.prevent="logout">
-					<b-icon-door-open />
-				</b-button>
-				<b-button size="sm" variant="light">
-					<b-icon-bell /> Notifications
-				</b-button>
+				<template v-if="isFollowersList">
+					<small>That's you 😎</small>
+				</template>
+				<template v-else>
+					<b-button size="sm" variant="outline-danger" @click.prevent="logout">
+						<b-icon-door-open />
+					</b-button>
+					<b-button size="sm" variant="light">
+						<b-icon-bell /> Notifications
+					</b-button>
+				</template>
 			</template>
 			<template v-else>
 				<b-button v-if="following" size="sm" variant="light" @click="unfollowUser">
@@ -49,6 +58,10 @@
 				type: Boolean,
 				default: false
 			},
+			isFollowersList: {
+				type: Boolean,
+				default: false
+			},
 			user: {
 				type: [Boolean, Object],
 				required: true
@@ -57,11 +70,7 @@
 				type: Boolean,
 				default: true
 			},
-			showFollowers: {
-				type: Boolean,
-				default: true
-			},
-			showFollowing: {
+			showFollows: {
 				type: Boolean,
 				default: true
 			}
