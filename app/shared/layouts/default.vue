@@ -3,6 +3,9 @@
 		<b-row align-h="end" class="h-100">
 			<b-col v-if="showSidebar" cols="3">
 				<div class="pt-3 pb-3 sticky-top">
+					<b-button v-if="!isHomepage" block class="mb-1" size="sm" :to="{ name: 'index' }" variant="light">
+						<b-icon-chevron-double-left /> Go to homepage
+					</b-button>
 					<t-profile v-if="user" :is-current-user="isCurrentUser" :user="user" @follow-user="onFollowChange" @unfollow-user="onFollowChange" />
 					<p class="pt-1 text-center">
 						<small>
@@ -40,9 +43,12 @@
 				return !routeNames.includes(this.$route.name);
 			},
 			isCurrentUser() {
-				let { name: routeName, params: routeParams } = this.$route,
-					authUser = this.$store.state.auth.user;
-				return routeName === 'index' || authUser.username === routeParams.username;
+				let authUser = this.$store.state.auth.user,
+					stateUser = this.$store.state.user;
+				return this.isHomepage || stateUser && stateUser.username === authUser.username || authUser.username === this.$route.params.username;
+			},
+			isHomepage() {
+				return this.$route.name === 'index';
 			},
 			user() {
 				return this.isCurrentUser ? this.$store.state.auth.user : this.$store.state.user;
