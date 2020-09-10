@@ -159,6 +159,72 @@ const deleteUserFollow = async (request, response) => {
 };
 
 /**
+ * Handle user followers list request
+ * @param {Object} request Express request object
+ * @param {Object} response Express response object
+ */
+const getFollowers = async (request, response) => {
+	try {
+		let foundUser = await user.findOne({
+			username: request.params.username
+		});
+		if (!foundUser) {
+			return response.status(404).json({
+				status: 'error',
+				message: 'User not found'
+			});
+		}
+		let followers = await user.find({
+			_id: {
+				$in: foundUser.followers
+			}
+		});
+		return response.json({
+			status: 'success',
+			payload: followers
+		});
+	} catch (error) {
+		return response.status(error.status || 500).json({
+			status: 'error',
+			message: error.message || 'Unexpected error'
+		});
+	}
+};
+
+/**
+ * Handle user following list request
+ * @param {Object} request Express request object
+ * @param {Object} response Express response object
+ */
+const getFollowing = async (request, response) => {
+	try {
+		let foundUser = await user.findOne({
+			username: request.params.username
+		});
+		if (!foundUser) {
+			return response.status(404).json({
+				status: 'error',
+				message: 'User not found'
+			});
+		}
+		let following = await user.find({
+			_id: {
+				$in: foundUser.following
+			}
+		});
+		return response.json({
+			status: 'success',
+			payload: following
+		});
+	} catch (error) {
+		return response.status(error.status || 500).json({
+			status: 'error',
+			message: error.message || 'Unexpected error'
+		});
+	}
+};
+
+/**
  * Handle top users list request
  * @param {Object} request Express request object
  * @param {Object} response Express response object
@@ -190,5 +256,7 @@ module.exports = {
 	getUserTweets,
 	postUserFollow,
 	deleteUserFollow,
+	getFollowers,
+	getFollowing,
 	getTop
 };

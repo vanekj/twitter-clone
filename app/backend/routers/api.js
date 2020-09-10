@@ -108,6 +108,16 @@ apiRouter.post('/user/follow/:username', userController.postUserFollow);
 apiRouter.delete('/user/follow/:username', userController.deleteUserFollow);
 
 /**
+ * Handle user followers list request
+ */
+apiRouter.get('/user/followers/:username', userController.getFollowers);
+
+/**
+ * Handle user following list request
+ */
+apiRouter.get('/user/following/:username', userController.getFollowing);
+
+/**
  * Handle top users list request
  */
 apiRouter.get('/user/top', userController.getTop);
