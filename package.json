@@ -11,7 +11,7 @@
 		"lint:css": "stylelint --allow-empty-input app/**/*.{css,vue}",
 		"lint": "npm run lint:js && npm run lint:css",
 		"dev": "docker-compose up --build",
-		"serve": "nodemon ./app/backend/server.js",
+		"serve": "nodemon --inspect=0.0.0.0:9229 ./app/backend/server.js",
 		"build": "nuxt build -c ./app/nuxt.config.js",
 		"start": "node ./app/backend/server.js"
 	},
