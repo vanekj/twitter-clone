@@ -30,10 +30,10 @@
 			</template>
 		</template>
 		<template v-else>
-			<b-button v-if="following" size="sm" variant="light" @click="unfollowUser">
+			<b-button v-if="following" block size="sm" variant="light" @click="unfollowUser">
 				<b-icon-check /> Following
 			</b-button>
-			<b-button v-else size="sm" variant="primary" @click="followUser">
+			<b-button v-else block size="sm" variant="primary" @click="followUser">
 				<b-icon-eye /> Follow
 			</b-button>
 		</template>

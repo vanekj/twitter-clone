@@ -9,7 +9,10 @@
 			</b-row>
 		</template>
 		<template v-else>
-			<p class="mt-5 mb-5 text-muted text-center">User has no followers 😕</p>
+			<p class="mt-5 mb-5 text-muted text-center">
+				<template v-if="isCurrentUser">You have no followers 😭</template>
+				<template v-else>User has no followers 😕</template>
+			</p>
 		</template>
 	</div>
 </template>
