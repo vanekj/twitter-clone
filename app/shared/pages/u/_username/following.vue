@@ -1,23 +1,17 @@
 <template>
-	<b-row class="h-100">
-		<b-col />
-		<b-col cols="3">
-			<t-profile :is-current-user="isCurrentUser" :user="user" @follow-user="onFollowChange" @unfollow-user="onFollowChange" />
-		</b-col>
-		<b-col class="bg-light pt-3" cols="7">
-			<h5>Following</h5>
-			<template v-if="userFollowing.length">
-				<b-row>
-					<b-col v-for="account in userFollowing" :key="account._id" cols="4">
-						<t-profile :is-current-user="account.username === currentUser.username" is-followers-list :show-footer="false" :user="account" @follow-user="onFollowChange" @unfollow-user="onFollowChange" />
-					</b-col>
-				</b-row>
-			</template>
-			<template v-else>
-				<p class="mt-5 mb-5 text-muted text-center">User is not following any other users 😧</p>
-			</template>
-		</b-col>
-	</b-row>
+	<div>
+		<h5>Following</h5>
+		<template v-if="userFollowing.length">
+			<b-row>
+				<b-col v-for="account in userFollowing" :key="account._id" cols="4">
+					<t-profile :is-current-user="account.username === currentUser.username" is-followers-list :show-footer="false" :user="account" @follow-user="onFollowChange" @unfollow-user="onFollowChange" />
+				</b-col>
+			</b-row>
+		</template>
+		<template v-else>
+			<p class="mt-5 mb-5 text-muted text-center">User is not following any other users 😧</p>
+		</template>
+	</div>
 </template>
 
 <script>

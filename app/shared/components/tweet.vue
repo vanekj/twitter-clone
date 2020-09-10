@@ -1,7 +1,7 @@
 <template>
-	<div v-if="tweet">
+	<div v-if="tweet" class="mb-3">
 		<b-overlay :show="tweetIsDeleting" spinner-type="grow" spinner-variant="danger" spinner-small>
-			<b-card class="mt-3 mb-3">
+			<b-card>
 				<b-media>
 					<template v-slot:aside>
 						<b-avatar :text="tweet.author.firstName[0] + tweet.author.lastName[0]" />

@@ -1,5 +1,5 @@
 <template>
-	<div class="mt-3 mb-5">
+	<div class="mb-5">
 		<b-alert variant="danger" :show="!!error">{{ error }}</b-alert>
 		<b-form @submit.prevent="onSubmit">
 			<b-row>

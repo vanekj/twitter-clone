@@ -1,35 +1,28 @@
 <template>
-	<b-row class="h-100">
-		<b-col />
-		<b-col cols="3">
-			<t-profile is-current-user :user="user" />
-		</b-col>
-		<b-col class="bg-light" cols="7">
-			<t-tweet :tweet="tweet" show-comments @delete="onTweetDelete" />
-		</b-col>
-	</b-row>
+	<div>
+		<t-tweet show-comments :tweet="tweet" @delete="onTweetDelete" />
+	</div>
 </template>
 
 <script>
-	import TProfile from '@/components/profile.vue';
 	import TTweet from '@/components/tweet.vue';
 
 	export default {
 		components: {
-			TProfile,
 			TTweet
 		},
 		async middleware({ store, params }) {
 			await store.dispatch('getTweet', {
 				tweetId: params.id
 			});
+			let tweet = store.getters.getSingleTweet(params.id);
+			await store.dispatch('getUser', {
+				username: tweet.author.username
+			});
 		},
 		computed: {
 			tweet() {
 				return this.$store.getters.getSingleTweet(this.$route.params.id);
-			},
-			user() {
-				return this.$store.state.auth.user;
 			}
 		},
 		methods: {

@@ -1,12 +1,68 @@
 <template>
 	<b-container class="h-100">
-		<nuxt />
+		<b-row align-h="end" class="h-100">
+			<b-col v-if="showSidebar" cols="3">
+				<div class="pt-3 pb-3 sticky-top">
+					<t-profile v-if="user" :is-current-user="isCurrentUser" :user="user" @follow-user="onFollowChange" @unfollow-user="onFollowChange" />
+					<p class="pt-1 text-center">
+						<small>
+							<a class="text-muted" href="https://github.com/vanekj" target="_blank">Author</a>
+							&centerdot;
+							<a class="text-muted" href="https://github.com/vanekj/twitter-clone" target="_blank">Repository</a>
+							&centerdot;
+							<a class="text-muted" href="https://github.com/vanekj/twitter-clone/issues" target="_blank">Report Issues</a>
+						</small>
+					</p>
+				</div>
+			</b-col>
+			<b-col class="pt-3 pb-3 bg-light" :class="{ 'd-flex align-items-center': alignCenter }" cols="7">
+				<nuxt />
+			</b-col>
+		</b-row>
 	</b-container>
 </template>
 
 <script>
+	import TProfile from '@/components/profile.vue';
+
 	export default {
-		middleware: 'auth'
+		middleware: 'auth',
+		components: {
+			TProfile
+		},
+		computed: {
+			alignCenter() {
+				let routeNames = ['login', 'registration'];
+				return routeNames.includes(this.$route.name);
+			},
+			showSidebar() {
+				let routeNames = ['login', 'registration'];
+				return !routeNames.includes(this.$route.name);
+			},
+			isCurrentUser() {
+				let { name: routeName, params: routeParams } = this.$route,
+					authUser = this.$store.state.auth.user;
+				return routeName === 'index' || authUser.username === routeParams.username;
+			},
+			user() {
+				return this.isCurrentUser ? this.$store.state.auth.user : this.$store.state.user;
+			}
+		},
+		methods: {
+			async onFollowChange(username) {
+				await Promise.all([
+					this.$store.dispatch('getUser', {
+						username
+					}),
+					this.$store.dispatch('getUserFollowers', {
+						username
+					}),
+					this.$store.dispatch('getUserFollowing', {
+						username
+					})
+				]);
+			}
+		}
 	};
 </script>
 

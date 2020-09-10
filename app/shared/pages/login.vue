@@ -1,12 +1,7 @@
 <template>
-	<b-row class="h-100">
-		<b-col></b-col>
-		<b-col cols="7" class="d-flex align-items-center bg-light">
-			<b-card title="Login">
-				<t-login-form @success="onSuccess" />
-			</b-card>
-		</b-col>
-	</b-row>
+	<b-card title="Login">
+		<t-login-form @success="onSuccess" />
+	</b-card>
 </template>
 
 <script>
