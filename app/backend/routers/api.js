@@ -1,4 +1,5 @@
-const express = require('express');
+const express = require('express'),
+	morgan = require('morgan');
 
 const config = require('../config');
 
@@ -11,6 +12,13 @@ const authController = require('../controllers/auth'),
 	userController = require('../controllers/user');
 
 const apiRouter = express.Router();
+
+/**
+ * Use morgan logger middleware
+ */
+if (config.isDevelopment) {
+	apiRouter.use(morgan('tiny'));
+}
 
 /**
  * Use body sanitizing middleware
