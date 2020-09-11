@@ -1,5 +1,4 @@
-const tweet = require('../models/tweet'),
-	user = require('../models/user');
+const tweetRepository = require('../repositories/tweet');
 
 /**
  * Handle tweet creation request
@@ -8,21 +7,7 @@ const tweet = require('../models/tweet'),
  */
 const postTweet = async (request, response) => {
 	try {
-		let foundUsernames = (request.body.content.match(/@(\w+)/g) || []).map((match) => match.substring(1)),
-			foundUsers = await user.find({
-				username: {
-					$in: foundUsernames
-				}
-			}),
-			contentWithMentions = Object.values(foundUsers).reduce((content, user) => {
-				let searchPattern = new RegExp(`@(${user.username})`, 'g');
-				return content.replace(searchPattern, '<a href="/u/$1">@$1</a>');
-			}, request.body.content);
-		await tweet.create({
-			content: contentWithMentions,
-			content_raw: request.body.content,
-			author: response.locals.user._id
-		});
+		await tweetRepository.create(request.body, response.locals.user._id);
 		return response.json({
 			status: 'success'
 		});
@@ -41,19 +26,10 @@ const postTweet = async (request, response) => {
  */
 const getTweets = async (request, response) => {
 	try {
-		let foundTweets = await tweet.find({
-			author: {
-				$in: [...response.locals.user.following, response.locals.user._id]
-			}
-		}).sort({
-			createdAt: 'descending'
-		}).populate({
-			path: 'author'
-		}).populate({
-			path: 'comments.author'
-		}).populate({
-			path: 'likes.author'
-		});
+		let foundTweets = await tweetRepository.get(null, [
+			...response.locals.user.following,
+			response.locals.user._id
+		]);
 		return response.json({
 			status: 'success',
 			payload: foundTweets
@@ -73,19 +49,7 @@ const getTweets = async (request, response) => {
  */
 const getTweet = async (request, response) => {
 	try {
-		let foundTweet = await tweet.findById(request.params.id).populate({
-			path: 'author'
-		}).populate({
-			path: 'comments.author'
-		}).populate({
-			path: 'likes.author'
-		});
-		if (!foundTweet) {
-			return response.status(404).json({
-				status: 'error',
-				message: 'Tweet not found'
-			});
-		}
+		let foundTweet = await tweetRepository.get(request.params.id);
 		return response.json({
 			status: 'success',
 			payload: foundTweet
@@ -105,10 +69,7 @@ const getTweet = async (request, response) => {
  */
 const deleteTweet = async (request, response) => {
 	try {
-		await tweet.findOneAndRemove({
-			_id: request.params.id,
-			author: response.locals.user._id
-		});
+		await tweetRepository.remove(request.params.id, response.locals.user._id);
 		return response.json({
 			status: 'success'
 		});
@@ -127,35 +88,10 @@ const deleteTweet = async (request, response) => {
  */
 const postTweetComment = async (request, response) => {
 	try {
-		let foundUsernames = (request.body.content.match(/@(\w+)/g) || []).map((match) => match.substring(1)),
-			foundUsers = await user.find({
-				username: {
-					$in: foundUsernames
-				}
-			}),
-			contentWithMentions = Object.values(foundUsers).reduce((content, user) => {
-				let searchPattern = new RegExp(`@(${user.username})`, 'g');
-				return content.replace(searchPattern, '<a href="/u/$1">@$1</a>');
-			}, request.body.content);
-		await tweet.findByIdAndUpdate(request.params.id, {
-			$push: {
-				comments: {
-					content: contentWithMentions,
-					content_raw: request.body.content,
-					author: response.locals.user._id
-				}
-			}
-		});
-		let updatedTweet = await tweet.findById(request.params.id).populate({
-			path: 'author'
-		}).populate({
-			path: 'comments.author'
-		}).populate({
-			path: 'likes.author'
-		});
+		let commentedTweet = await tweetRepository.addComment(request.params.id, request.body, response.locals.user._id);
 		return response.json({
 			status: 'success',
-			payload: updatedTweet
+			payload: commentedTweet
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({
@@ -172,23 +108,7 @@ const postTweetComment = async (request, response) => {
  */
 const deleteTweetComment = async (request, response) => {
 	try {
-		await tweet.findOneAndUpdate({
-			_id: request.params.id,
-			'comments.author': response.locals.user._id
-		}, {
-			$pull: {
-				comments: {
-					_id: request.params.commentId
-				}
-			}
-		});
-		let updatedTweet = await tweet.findById(request.params.id).populate({
-			path: 'author'
-		}).populate({
-			path: 'comments.author'
-		}).populate({
-			path: 'likes.author'
-		});
+		let updatedTweet = await tweetRepository.removeComment(request.params.id, request.params.commentId, response.locals.user._id);
 		return response.json({
 			status: 'success',
 			payload: updatedTweet
@@ -208,20 +128,7 @@ const deleteTweetComment = async (request, response) => {
  */
 const postTweetLike = async (request, response) => {
 	try {
-		await tweet.findByIdAndUpdate(request.params.id, {
-			$push: {
-				likes: {
-					author: response.locals.user._id
-				}
-			}
-		});
-		let updatedTweet = await tweet.findById(request.params.id).populate({
-			path: 'author'
-		}).populate({
-			path: 'comments.author'
-		}).populate({
-			path: 'likes.author'
-		});
+		let updatedTweet = await tweetRepository.addLike(request.params.id, response.locals.user._id);
 		return response.json({
 			status: 'success',
 			payload: updatedTweet
@@ -241,23 +148,7 @@ const postTweetLike = async (request, response) => {
  */
 const deleteTweetLike = async (request, response) => {
 	try {
-		await tweet.findOneAndUpdate({
-			_id: request.params.id,
-			'likes.author': response.locals.user._id
-		}, {
-			$pull: {
-				likes: {
-					author: response.locals.user._id
-				}
-			}
-		});
-		let updatedTweet = await tweet.findById(request.params.id).populate({
-			path: 'author'
-		}).populate({
-			path: 'comments.author'
-		}).populate({
-			path: 'likes.author'
-		});
+		let updatedTweet = await tweetRepository.removeLike(request.params.id, response.locals.user._id);
 		return response.json({
 			status: 'success',
 			payload: updatedTweet

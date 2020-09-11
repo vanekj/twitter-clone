@@ -2,7 +2,8 @@ const bcrypt = require('bcryptjs'),
 	jsonwebtoken = require('jsonwebtoken');
 
 const config = require('../config'),
-	user = require('../models/user');
+	user = require('../models/user'),
+	userRepository = require('../repositories/user');
 
 /**
  * Handle user registration request
@@ -94,7 +95,7 @@ const postLogin = async (request, response) => {
  */
 const getMe = async (request, response) => {
 	try {
-		let foundUser = await user.findById(response.locals.user._id);
+		let foundUser = await userRepository.get(response.locals.user.username);
 		return response.json({
 			status: 'success',
 			payload: foundUser

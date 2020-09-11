@@ -1,5 +1,5 @@
-const user = require('../models/user'),
-	tweet = require('../models/tweet');
+const tweetRepository = require('../repositories/tweet'),
+	userRepository = require('../repositories/user');
 
 /**
  * Handle single user information request
@@ -8,15 +8,7 @@ const user = require('../models/user'),
  */
 const getUser = async (request, response) => {
 	try {
-		let foundUser = await user.findOne({
-			username: request.params.username
-		});
-		if (!foundUser) {
-			return response.status(404).json({
-				status: 'error',
-				message: 'User not found'
-			});
-		}
+		let foundUser = await userRepository.get(request.params.username);
 		return response.json({
 			status: 'success',
 			payload: foundUser
@@ -36,26 +28,8 @@ const getUser = async (request, response) => {
  */
 const getUserTweets = async (request, response) => {
 	try {
-		let foundUser = await user.findOne({
-			username: request.params.username
-		});
-		if (!foundUser) {
-			return response.status(404).json({
-				status: 'error',
-				message: 'User not found'
-			});
-		}
-		let foundTweets = await tweet.find({
-			author: foundUser._id
-		}).sort({
-			createdAt: 'descending'
-		}).populate({
-			path: 'author'
-		}).populate({
-			path: 'comments.author'
-		}).populate({
-			path: 'likes.author'
-		});
+		let foundUser = await userRepository.get(request.params.username),
+			foundTweets = await tweetRepository.get(null, [foundUser._id]);
 		return response.json({
 			status: 'success',
 			payload: foundTweets
@@ -75,33 +49,7 @@ const getUserTweets = async (request, response) => {
  */
 const postUserFollow = async (request, response) => {
 	try {
-		let foundUser = await user.findOne({
-			username: request.params.username
-		});
-		if (!foundUser) {
-			return response.status(404).json({
-				status: 'error',
-				message: 'User not found'
-			});
-		}
-		await Promise.all([
-			user.findByIdAndUpdate(response.locals.user._id, {
-				$push: {
-					following: foundUser._id
-				},
-				$inc: {
-					followingCount: 1
-				}
-			}),
-			user.findByIdAndUpdate(foundUser._id, {
-				$push: {
-					followers: response.locals.user._id
-				},
-				$inc: {
-					followersCount: 1
-				}
-			})
-		]);
+		await userRepository.follow(response.locals.user.username, request.params.username);
 		return response.json({
 			status: 'success'
 		});
@@ -120,33 +68,7 @@ const postUserFollow = async (request, response) => {
  */
 const deleteUserFollow = async (request, response) => {
 	try {
-		let foundUser = await user.findOne({
-			username: request.params.username
-		});
-		if (!foundUser) {
-			return response.status(404).json({
-				status: 'error',
-				message: 'User not found'
-			});
-		}
-		await Promise.all([
-			user.findByIdAndUpdate(response.locals.user._id, {
-				$pull: {
-					following: foundUser._id
-				},
-				$inc: {
-					followingCount: -1
-				}
-			}),
-			user.findByIdAndUpdate(foundUser._id, {
-				$pull: {
-					followers: response.locals.user._id
-				},
-				$inc: {
-					followersCount: -1
-				}
-			})
-		]);
+		await userRepository.unfollow(response.locals.user.username, request.params.username);
 		return response.json({
 			status: 'success'
 		});
@@ -165,20 +87,8 @@ const deleteUserFollow = async (request, response) => {
  */
 const getFollowers = async (request, response) => {
 	try {
-		let foundUser = await user.findOne({
-			username: request.params.username
-		});
-		if (!foundUser) {
-			return response.status(404).json({
-				status: 'error',
-				message: 'User not found'
-			});
-		}
-		let followers = await user.find({
-			_id: {
-				$in: foundUser.followers
-			}
-		});
+		let foundUser = await userRepository.get(request.params.username),
+			followers = await userRepository.getByIds(foundUser.followers);
 		return response.json({
 			status: 'success',
 			payload: followers
@@ -198,20 +108,8 @@ const getFollowers = async (request, response) => {
  */
 const getFollowing = async (request, response) => {
 	try {
-		let foundUser = await user.findOne({
-			username: request.params.username
-		});
-		if (!foundUser) {
-			return response.status(404).json({
-				status: 'error',
-				message: 'User not found'
-			});
-		}
-		let following = await user.find({
-			_id: {
-				$in: foundUser.following
-			}
-		});
+		let foundUser = await userRepository.get(request.params.username),
+			following = await userRepository.getByIds(foundUser.following);
 		return response.json({
 			status: 'success',
 			payload: following
@@ -231,17 +129,10 @@ const getFollowing = async (request, response) => {
  */
 const getTop = async (request, response) => {
 	try {
-		let users = await user.find({
-			_id: {
-				$ne: response.locals.user._id
-			}
-		}).sort([
-			['followersCount', 'descending'],
-			['createdAt', 'ascending']
-		]).limit(3);
+		let topUsers = await userRepository.getTop([response.locals.user._id]);
 		return response.json({
 			status: 'success',
-			payload: users
+			payload: topUsers
 		});
 	} catch (error) {
 		return response.status(error.status || 500).json({
