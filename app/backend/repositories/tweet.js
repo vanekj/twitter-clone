@@ -88,7 +88,7 @@ const remove = async (tweetId, authorId) => {
  * @returns {Promise<Object>} Updated tweet
  */
 const addComment = async (tweetId, commentData, authorId) => {
-	let contentWithMentions = _findMentions(commentData.content);
+	let contentWithMentions = await _findMentions(commentData.content);
 	await tweet.findByIdAndUpdate(tweetId, {
 		$push: {
 			comments: {
